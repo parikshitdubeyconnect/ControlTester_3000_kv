@@ -20,6 +20,7 @@ import {
 
 import ControlTestingKpis from "@/components/ControlTestingKpis";
 import HeroSection from "@/components/HeroSection";
+import HowItWorks from "@/components/HowItWorks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -328,6 +329,13 @@ export default function ControlTestingPage() {
       />
       <div className="flex-1 overflow-auto p-6">
         <div className="max-w-4xl mx-auto space-y-6">
+          <HowItWorks
+            steps={[
+              { number: 1, title: "Upload Test Script", desc: "Upload the control test script (CSV / XLSX) defining the controls in scope and the evidence required for each test step.", color: "#7213EA" },
+              { number: 2, title: "Validate Evidence", desc: "APEX validates uploaded evidence against required controls, checks completeness, and flags gaps before workpaper generation.", color: "#1E49E2" },
+              { number: 3, title: "Generate Workpaper", desc: "Review the validation summary and generate a structured audit workpaper ready for download and reporting.", color: "#098E7E" },
+            ]}
+          />
           <div className="flex items-center justify-center gap-2 mb-6">
             {[
               { num: 1, label: "Upload Script" },

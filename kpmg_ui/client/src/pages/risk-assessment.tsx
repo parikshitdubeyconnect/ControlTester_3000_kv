@@ -7,6 +7,7 @@ import {
   CheckCircle2, FileBarChart, Loader2, Plus, ShieldAlert, Sparkles,
 } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
+import HowItWorks from "@/components/HowItWorks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -401,6 +402,13 @@ export default function RiskAssessmentPage() {
           {/* Dashboard */}
           {!selectedAssessment && !showCreate && (
             <div>
+              <HowItWorks
+                steps={[
+                  { number: 1, title: "Define Assessment Scope", desc: "Create an assessment, name it, and select the applications or assets in scope. Ad-hoc entries can be added where an asset isn't in the register.", color: "#7213EA" },
+                  { number: 2, title: "Capture Risks & Scoring", desc: "Walk through the guided wizard to record inherent and residual risks, link controls, and apply structured scoring across impact and likelihood dimensions.", color: "#1E49E2" },
+                  { number: 3, title: "Finalise & Report", desc: "Review scored results, tag drafts vs. active assessments, and export the risk assessment output for reporting and downstream workflows.", color: "#098E7E" },
+                ]}
+              />
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <Card><CardContent className="pt-6"><p className="text-2xl font-bold text-blue-600">{active}</p><p className="text-sm text-slate-500">Active Assessments</p></CardContent></Card>
                 <Card><CardContent className="pt-6"><p className="text-2xl font-bold text-orange-600">{highCrit}</p><p className="text-sm text-slate-500">High / Critical Risks</p></CardContent></Card>

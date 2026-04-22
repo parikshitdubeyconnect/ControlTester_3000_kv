@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import HeroSection from "@/components/HeroSection";
+import HowItWorks from "@/components/HowItWorks";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -646,6 +647,14 @@ export default function RegulatoryTestingPage() {
       <HeroSection title="Regulatory Testing" subtitle="Compare regulations or assess RCM documents against regulatory requirements" icon={Scale} />
       <div className="flex-1 overflow-auto bg-[#F0F2F7] px-6 py-7">
       <div className="mx-auto max-w-[1180px] space-y-6">
+
+        <HowItWorks
+          steps={[
+            { number: 1, title: "Select Mode & Sources", desc: "Choose Regulation Comparison to benchmark two frameworks, or RCM Comparison to assess an RCM against a regulation. Pick the library or upload source documents.", color: "#7213EA" },
+            { number: 2, title: "Run Comparison", desc: "APEX parses obligations, aligns requirements, and identifies overlaps, gaps, and deltas between the selected documents.", color: "#1E49E2" },
+            { number: 3, title: "Review & Export", desc: "Explore mapped obligations, coverage gaps, and supporting citations. Export the analysis as a structured report for downstream review.", color: "#098E7E" },
+          ]}
+        />
 
         <div className="mx-auto flex w-fit flex-wrap justify-center gap-2 rounded-full border border-[#00338D]/12 bg-white/85 p-2 shadow-[0_18px_36px_-24px_rgba(12,35,60,0.4)] backdrop-blur">
           <Button
