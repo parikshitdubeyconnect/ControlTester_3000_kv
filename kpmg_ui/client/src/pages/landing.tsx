@@ -213,7 +213,9 @@ const HERO_SUMMARY = [
 export default function LandingPage() {
   const [, setLocation] = useLocation();
   const { logout } = useAuth();
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(FEATURE_SECTIONS.map((s) => [s.id, true]))
+  );
 
   const toggleSection = (id: string) =>
     setCollapsedSections((prev) => ({ ...prev, [id]: !prev[id] }));

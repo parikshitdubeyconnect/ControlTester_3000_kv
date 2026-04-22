@@ -17,7 +17,7 @@ interface HowItWorksProps {
 
 export default function HowItWorks({
   steps,
-  defaultOpen = true,
+  defaultOpen = false,
   eyebrow = "Process",
   title = "How It Works",
 }: HowItWorksProps) {
