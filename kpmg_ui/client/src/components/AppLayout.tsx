@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import {
-  Moon,
-  Sun,
-  LogOut,
   MessageSquare,
   FileSearch,
   Settings,
@@ -18,12 +15,9 @@ import {
   BookOpen,
   AlertTriangle,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useTheme } from "./ThemeProvider";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/kpmg (1).png";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -56,9 +50,8 @@ function readHiddenPages(): string[] {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  const { theme, toggleTheme } = useTheme();
   const [location, setLocation] = useLocation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [hiddenPages, setHiddenPages] = useState<string[]>(readHiddenPages);
 
@@ -191,45 +184,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="kpmg-shell-header h-16 flex items-center px-4 gap-2 flex-shrink-0 sticky top-0 z-50">
-          <div className="flex items-center gap-2.5">
-            <span className="h-2 w-2 rounded-full bg-[var(--pacific)] data-pulse" />
-            <div className="flex flex-col leading-none">
-              <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-[#5B6B82] select-none">TRACE workspace</span>
-              <span className="text-[13px] font-semibold text-[#0C233C] mt-1">KPMG Control Platform</span>
-            </div>
-          </div>
-          <div className="flex-1" />
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--green)] bg-[rgba(0,154,68,0.1)] border border-[rgba(0,154,68,0.12)] px-2.5 py-1 rounded-full">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--green)] animate-pulse" />
-              Online
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              data-testid="button-theme-toggle"
-              className="h-8 w-8 text-[#5B6B82] hover:text-[#0C233C] hover:bg-[#F3F7FF]"
-            >
-              {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={logout}
-              title="Logout"
-              data-testid="button-logout"
-              className="h-8 w-8 text-[#5B6B82] hover:text-[#0C233C] hover:bg-[#F3F7FF]"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-            <Avatar className="h-7 w-7 cursor-default ml-1" title={user?.name}>
-              <AvatarFallback className="bg-[var(--cobalt)] text-white text-xs font-semibold">{userInitial}</AvatarFallback>
-            </Avatar>
-          </div>
-        </header>
-
         <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     </div>
