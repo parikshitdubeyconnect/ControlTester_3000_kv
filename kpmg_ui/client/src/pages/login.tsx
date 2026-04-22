@@ -12,21 +12,20 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowRight, ShieldCheck, Scale, AlertTriangle, Cpu, Lock, Activity } from "lucide-react";
 
-// ── Left panel: animated network / risk-tech visual ────────────────────────
-
+// ── Network nodes — all constrained to left half of the viewport (x < 50) ──
 const NODES = [
-  { x: 18, y: 22, r: 5, color: "#00B8F5", delay: "0s" },
-  { x: 42, y: 14, r: 4, color: "#7213EA", delay: "0.4s" },
-  { x: 68, y: 28, r: 6, color: "#1E49E2", delay: "0.8s" },
-  { x: 82, y: 55, r: 4, color: "#00B8F5", delay: "0.2s" },
-  { x: 62, y: 68, r: 5, color: "#009A44", delay: "1s" },
-  { x: 30, y: 72, r: 4, color: "#7213EA", delay: "0.6s" },
-  { x: 14, y: 52, r: 6, color: "#098E7E", delay: "0.3s" },
-  { x: 50, y: 45, r: 8, color: "#00B8F5", delay: "0.1s" },
-  { x: 76, y: 82, r: 4, color: "#1E49E2", delay: "0.9s" },
-  { x: 34, y: 40, r: 3, color: "#009A44", delay: "0.5s" },
-  { x: 88, y: 34, r: 3, color: "#7213EA", delay: "0.7s" },
-  { x: 55, y: 80, r: 4, color: "#098E7E", delay: "1.1s" },
+  { x: 9,  y: 22, r: 5, color: "#00B8F5", delay: "0s"   },
+  { x: 21, y: 14, r: 4, color: "#7213EA", delay: "0.4s" },
+  { x: 34, y: 28, r: 6, color: "#1E49E2", delay: "0.8s" },
+  { x: 41, y: 55, r: 4, color: "#00B8F5", delay: "0.2s" },
+  { x: 31, y: 68, r: 5, color: "#009A44", delay: "1s"   },
+  { x: 15, y: 72, r: 4, color: "#7213EA", delay: "0.6s" },
+  { x: 7,  y: 52, r: 6, color: "#098E7E", delay: "0.3s" },
+  { x: 25, y: 45, r: 8, color: "#00B8F5", delay: "0.1s" },
+  { x: 38, y: 82, r: 4, color: "#1E49E2", delay: "0.9s" },
+  { x: 17, y: 40, r: 3, color: "#009A44", delay: "0.5s" },
+  { x: 44, y: 34, r: 3, color: "#7213EA", delay: "0.7s" },
+  { x: 28, y: 80, r: 4, color: "#098E7E", delay: "1.1s" },
 ];
 
 const EDGES = [
@@ -35,35 +34,40 @@ const EDGES = [
   [9, 7], [9, 5], [6, 9], [10, 2],
 ];
 
+// ── Floating stat cards — constrained to left ~40% of viewport ─────────────
 const FLOAT_CARDS = [
-  { icon: ShieldCheck, label: "Controls mapped", value: "1,259", color: "#009A44", x: "6%", y: "12%" },
-  { icon: Scale,       label: "Obligations active", value: "97",    color: "#1E49E2", x: "54%", y: "6%" },
-  { icon: AlertTriangle, label: "Risks identified", value: "380",  color: "#7213EA", x: "62%", y: "72%" },
-  { icon: Activity,    label: "Coverage score",    value: "84%",   color: "#098E7E", x: "4%",  y: "68%" },
+  { icon: ShieldCheck,   label: "Controls mapped",    value: "1,259", color: "#009A44", x: "4%",  y: "14%" },
+  { icon: Scale,         label: "Obligations active", value: "97",    color: "#1E49E2", x: "26%", y: "7%"  },
+  { icon: AlertTriangle, label: "Risks identified",   value: "380",   color: "#7213EA", x: "30%", y: "72%" },
+  { icon: Activity,      label: "Coverage score",     value: "84%",   color: "#098E7E", x: "3%",  y: "66%" },
 ];
 
-function LeftPanel() {
+// ── Full-width visual panel (graphics only on left half) ───────────────────
+function VisualPanel() {
   return (
-    <div className="relative flex-1 flex flex-col justify-center overflow-hidden select-none"
-      style={{ background: "linear-gradient(145deg, #060e1a 0%, #0c1e36 40%, #0f2548 70%, #0a1a30 100%)" }}>
-
+    <div
+      className="absolute inset-0 overflow-hidden select-none"
+      style={{ background: "linear-gradient(145deg, #060e1a 0%, #0c1e36 40%, #0f2548 70%, #0a1a30 100%)" }}
+    >
       {/* Grid overlay */}
-      <div className="absolute inset-0 opacity-[0.07]"
+      <div
+        className="absolute inset-0 opacity-[0.07]"
         style={{
           backgroundImage: "linear-gradient(#00B8F5 1px, transparent 1px), linear-gradient(90deg, #00B8F5 1px, transparent 1px)",
           backgroundSize: "48px 48px",
-        }} />
+        }}
+      />
 
-      {/* Glow orbs */}
-      <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "radial-gradient(circle, rgba(114,19,234,0.22) 0%, transparent 70%)", filter: "blur(80px)", top: "-15%", right: "-10%" }} />
-      <div className="absolute rounded-full pointer-events-none" style={{ width: 400, height: 400, background: "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)", filter: "blur(80px)", bottom: "-10%", left: "5%" }} />
-      <div className="absolute rounded-full pointer-events-none" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(30,73,226,0.2) 0%, transparent 70%)", filter: "blur(60px)", top: "40%", left: "30%" }} />
+      {/* Glow orbs — biased towards the left */}
+      <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "radial-gradient(circle, rgba(114,19,234,0.22) 0%, transparent 70%)", filter: "blur(80px)", top: "-15%",  left: "-6%" }} />
+      <div className="absolute rounded-full pointer-events-none" style={{ width: 400, height: 400, background: "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)", filter: "blur(80px)", bottom: "-10%", left: "8%"  }} />
+      <div className="absolute rounded-full pointer-events-none" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(30,73,226,0.2) 0%, transparent 70%)",   filter: "blur(60px)", top: "40%",   left: "22%" }} />
 
-      {/* Network SVG */}
+      {/* Network SVG — anchored left so nodes stay in the left half */}
       <svg
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full hidden lg:block"
         viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMinYMid slice"
         style={{ opacity: 0.35 }}
       >
         {EDGES.map(([a, b], i) => (
@@ -87,37 +91,45 @@ function LeftPanel() {
         ))}
       </svg>
 
-      {/* Floating stat cards */}
-      {FLOAT_CARDS.map(({ icon: Icon, label, value, color, x, y }, i) => (
-        <div
-          key={i}
-          className="absolute flex items-center gap-2.5 rounded-2xl border border-white/10 px-4 py-3"
-          style={{
-            left: x, top: y,
-            background: "rgba(12,35,60,0.75)",
-            backdropFilter: "blur(12px)",
-            boxShadow: `0 0 0 1px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4)`,
-            animation: `float-card ${2.8 + i * 0.4}s ease-in-out infinite alternate`,
-          }}
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0" style={{ background: color + "22", border: `1px solid ${color}44` }}>
-            <Icon className="h-4 w-4" style={{ color }} />
+      {/* Floating stat cards — all on the left side */}
+      <div className="hidden lg:block">
+        {FLOAT_CARDS.map(({ icon: Icon, label, value, color, x, y }, i) => (
+          <div
+            key={i}
+            className="absolute flex items-center gap-2.5 rounded-2xl border border-white/10 px-4 py-3"
+            style={{
+              left: x, top: y,
+              background: "rgba(12,35,60,0.75)",
+              backdropFilter: "blur(12px)",
+              boxShadow: `0 0 0 1px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4)`,
+              animation: `float-card ${2.8 + i * 0.4}s ease-in-out infinite alternate`,
+            }}
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0" style={{ background: color + "22", border: `1px solid ${color}44` }}>
+              <Icon className="h-4 w-4" style={{ color }} />
+            </div>
+            <div>
+              <p className="text-[18px] font-bold leading-none text-white">{value}</p>
+              <p className="text-[10px] text-white/50 mt-0.5 leading-none">{label}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[18px] font-bold leading-none text-white">{value}</p>
-            <p className="text-[10px] text-white/50 mt-0.5 leading-none">{label}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {/* Central lock icon */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-20 w-20 items-center justify-center rounded-[28px] border border-white/10"
-        style={{ background: "rgba(0,184,245,0.08)", boxShadow: "0 0 60px rgba(0,184,245,0.15), 0 0 120px rgba(114,19,234,0.1)" }}>
+      {/* Central lock icon — positioned left-of-centre */}
+      <div
+        className="absolute top-1/2 -translate-y-1/2 hidden lg:flex h-20 w-20 items-center justify-center rounded-[28px] border border-white/10"
+        style={{
+          left: "22%",
+          background: "rgba(0,184,245,0.08)",
+          boxShadow: "0 0 60px rgba(0,184,245,0.15), 0 0 120px rgba(114,19,234,0.1)",
+        }}
+      >
         <Lock className="h-8 w-8 text-[#00B8F5]" />
       </div>
 
-      {/* Headline copy */}
-      <div className="absolute bottom-10 left-8 right-8">
+      {/* Headline — bottom-left */}
+      <div className="absolute bottom-10 left-8 right-8 lg:right-auto lg:max-w-[420px]">
         <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-[#00B8F5] mb-3">Agentic Controls Platform</p>
         <h2 className="text-[28px] font-bold leading-tight text-white max-w-xs">
           Automate.<br />Detect.<br />Act.
@@ -137,8 +149,7 @@ function LeftPanel() {
   );
 }
 
-// ── Main login page ─────────────────────────────────────────────────────────
-
+// ── Main login page ────────────────────────────────────────────────────────
 export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { user, login, register } = useAuth();
@@ -176,8 +187,8 @@ export default function LoginPage() {
   function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setRegError("");
-    if (!regName.trim()) { setRegError("Name is required."); return; }
-    if (!regEmail.trim()) { setRegError("Email is required."); return; }
+    if (!regName.trim())        { setRegError("Name is required."); return; }
+    if (!regEmail.trim())       { setRegError("Email is required."); return; }
     if (regPassword.length < 6) { setRegError("Password must be at least 6 characters."); return; }
     if (regPassword !== regConfirm) { setRegError("Passwords do not match."); return; }
     setRegistering(true);
@@ -195,8 +206,10 @@ export default function LoginPage() {
     <div className="flex flex-col min-h-screen w-screen overflow-hidden" style={{ fontFamily: "Arial, sans-serif" }}>
 
       {/* ── Top KPMG banner ── */}
-      <div className="flex-shrink-0 w-full flex items-center justify-between px-8 py-4 lg:px-14 z-20"
-        style={{ background: "rgba(6,14,26,0.96)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+      <div
+        className="flex-shrink-0 w-full flex items-center justify-between px-8 py-4 lg:px-14 z-30 relative"
+        style={{ background: "rgba(6,14,26,0.96)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+      >
         <div className="flex items-center gap-3">
           <span className="text-[18px] font-bold tracking-tight text-white">KPMG</span>
           <span className="text-[#1E49E2] text-[20px] font-light select-none">|</span>
@@ -218,29 +231,19 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── Main split layout ── */}
-      <div className="flex flex-1 overflow-hidden">
+      {/* ── Full-width visual + floating login card overlay ── */}
+      <div className="relative flex-1 overflow-hidden">
+        <VisualPanel />
 
-        {/* Left visual panel — hidden on mobile */}
-        <div className="hidden lg:flex" style={{ width: "55%" }}>
-          <LeftPanel />
-        </div>
-
-        {/* Right login panel */}
-        <div
-          className="relative flex flex-1 flex-col items-center justify-center px-8 py-10 lg:px-14 overflow-hidden"
-          style={{ background: "linear-gradient(145deg, #060e1a 0%, #0c1e36 40%, #0f2548 70%, #0a1a30 100%)" }}
-        >
-          {/* Subtle orbs for continuity with the left panel */}
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 400, height: 400, background: "radial-gradient(circle, rgba(30,73,226,0.18) 0%, transparent 70%)", filter: "blur(80px)", top: "-10%", right: "-10%" }} />
-          <div className="absolute rounded-full pointer-events-none" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(114,19,234,0.14) 0%, transparent 70%)", filter: "blur(60px)", bottom: "-5%", left: "-5%" }} />
-          <div className="relative z-10 w-full max-w-[420px]">
-
-            {/* Card */}
-            <div className="relative overflow-hidden rounded-[24px] border border-[#D6E2F5] bg-white shadow-[0_24px_64px_-24px_rgba(12,35,60,0.18)] p-8 sm:p-10">
+        {/* Login card — floats over the right side of the panel */}
+        <div className="relative z-20 flex h-full items-center justify-center px-6 py-10 lg:justify-end lg:pr-16 xl:pr-24">
+          <div className="w-full max-w-[420px]">
+            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white shadow-[0_34px_80px_-24px_rgba(0,0,0,0.55)] p-8 sm:p-10">
               {/* Top accent bar */}
-              <div className="absolute inset-x-0 top-0 h-[3px] rounded-t-[24px]"
-                style={{ background: "linear-gradient(90deg, #7213EA 0%, #1E49E2 56%, #00B8F5 100%)" }} />
+              <div
+                className="absolute inset-x-0 top-0 h-[3px] rounded-t-[24px]"
+                style={{ background: "linear-gradient(90deg, #7213EA 0%, #1E49E2 56%, #00B8F5 100%)" }}
+              />
 
               <div className="mb-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[#E2EBF8] bg-[#F3F7FF] px-3 py-1.5 mb-5">
@@ -300,11 +303,6 @@ export default function LoginPage() {
                   {!loggingIn && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
               </form>
-
-              <div className="mt-6 rounded-[14px] border border-[#E8F0FB] bg-[#F3F7FF] px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#1E49E2]">Demo credentials</p>
-                <p className="mt-1 text-[13px] text-[#334155]">kpmguser / admin123</p>
-              </div>
 
               <p className="mt-6 text-sm text-[#7A8FA8]">
                 New user?{" "}
