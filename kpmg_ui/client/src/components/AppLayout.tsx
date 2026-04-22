@@ -83,16 +83,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
           className="relative z-10 flex h-24 items-center border-b border-white/8 px-3 flex-shrink-0"
           style={{ justifyContent: collapsed ? "center" : "flex-start" }}
         >
-          <div className={`flex items-center transition-all duration-300 ${collapsed ? "justify-center" : "gap-3 pr-10"}`}>
-            <div className="flex h-12 items-center rounded-[18px] bg-white px-3 shadow-[0_14px_30px_-24px_rgba(0,0,0,0.5)]">
-              <img src={logo} alt="KPMG" className="h-7 w-auto object-contain flex-shrink-0" />
-            </div>
-            {!collapsed && (
-              <div className="min-w-0">
-                <p className="text-[9px] font-bold uppercase tracking-[0.32em] text-[#ACEAFF]">KPMG TRACE</p>
-                <p className="mt-1 text-[13px] font-semibold text-white">Control Workspace</p>
-                <p className="text-[10px] leading-4 text-[#C8D8F0]">Assessment, testing, and reporting</p>
-              </div>
+          <div className={`flex items-center transition-all duration-300 ${collapsed ? "justify-center" : "gap-2 pr-10"}`}>
+            {collapsed ? (
+              <span className="text-[15px] font-bold tracking-tight text-white">K</span>
+            ) : (
+              <>
+                <span className="text-[16px] font-bold tracking-tight text-white">KPMG</span>
+                <span className="text-[#1E49E2] text-[18px] font-light select-none">|</span>
+                <span className="text-[16px] font-bold tracking-tight text-[#00B8F5]">TRACE</span>
+              </>
             )}
           </div>
 
