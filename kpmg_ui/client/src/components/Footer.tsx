@@ -15,7 +15,7 @@ export default function Footer() {
           className="text-[11px] mt-0.5"
           style={{ color: "rgba(255,255,255,0.28)" }}
         >
-          © 2026 KPMG LLP, a UK limited liability partnership and a member firm of the KPMG global organisation.
+          © 2026 KPMG Assurance and Consulting Services LLP, an Indian Limited Liability Partnership and a member firm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private English company limited by guarantee. All rights reserved.
         </div>
       </div>
       <span
