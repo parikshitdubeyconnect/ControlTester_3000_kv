@@ -18,6 +18,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
+import Footer from "@/components/Footer";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -185,6 +186,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
       <div className="flex-1 flex flex-col min-w-0">
         <main className="flex-1 overflow-hidden">{children}</main>
+        <Footer />
       </div>
     </div>
   );

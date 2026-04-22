@@ -11,6 +11,7 @@ import {
   ChevronDown as ChevronDownIcon,
 } from "lucide-react";
 import TraceNavBar from "@/components/TraceNavBar";
+import Footer from "@/components/Footer";
 import {
   BarChart,
   Bar,
@@ -668,6 +669,7 @@ export default function RiskControlsCoveragePage() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import TraceNavBar from "@/components/TraceNavBar";
+import Footer from "@/components/Footer";
 import {
   BarChart,
   Bar,
@@ -647,6 +648,7 @@ export default function ControlQualityAnalysisPage() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

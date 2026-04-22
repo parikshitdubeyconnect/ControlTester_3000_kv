@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ArrowRight, ShieldCheck, Scale, AlertTriangle, Cpu, Lock, Activity } from "lucide-react";
+import Footer from "@/components/Footer";
 
 // ── Network nodes — all constrained to left half of the viewport (x < 50) ──
 const NODES = [
@@ -353,6 +354,7 @@ export default function LoginPage() {
           </form>
         </DialogContent>
       </Dialog>
+      <Footer />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Footer from "@/components/Footer";
 import logo from "@/assets/kpmg (1).png";
 
 type FeatureCategory =
@@ -372,6 +373,7 @@ export default function LandingPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

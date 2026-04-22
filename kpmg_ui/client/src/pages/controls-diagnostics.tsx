@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import TraceNavBar from "@/components/TraceNavBar";
+import Footer from "@/components/Footer";
 import {
   Play,
   CheckCircle,
@@ -579,6 +580,7 @@ export default function ControlsDiagnosticsPage() {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+      <Footer />
     </div>
   );
 }

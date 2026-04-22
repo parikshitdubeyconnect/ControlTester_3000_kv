@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, Lock, Cpu, FileText } from "lucide-react";
 import TraceNavBar from "@/components/TraceNavBar";
+import Footer from "@/components/Footer";
 import { APEX_OBLIGATIONS } from "@/data/apex-obligations-data";
 
 // ─── Simple stat-only placeholder for AI-powered regulation coverage ──────────
@@ -260,6 +261,7 @@ export default function RegulationControlsCoveragePage() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   );
 }
