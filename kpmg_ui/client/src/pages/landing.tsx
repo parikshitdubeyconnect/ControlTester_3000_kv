@@ -98,6 +98,15 @@ const FEATURE_CARDS: FeatureCard[] = [
     category: "Oversight and Libraries",
   },
   {
+    title: "Controls Diagnostics",
+    path: "/controls-diagnostics",
+    description: "Upload your GRC data once and run all four diagnostic analyses simultaneously — Risk-Controls Coverage, Control Quality, Duplicates, and Benchmarking — across your full control corpus.",
+    functionLabel: "Design diagnostics",
+    accent: "#7213EA",
+    icon: ShieldCheck,
+    category: "Assessment and Testing",
+  },
+  {
     title: "Regulatory Testing",
     path: "/regulatory-testing",
     description: "Run regulation-versus-regulation comparisons or assess uploaded RCM documents against regulatory obligations from uploads or library sources.",

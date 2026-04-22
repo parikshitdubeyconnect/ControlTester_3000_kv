@@ -29,6 +29,10 @@ import IssueManagementPage from "@/pages/issue-management";
 import ExceptionManagementPage from "@/pages/exception-management";
 import LandingPage from "@/pages/landing";
 import AssetRegistryPage from "@/pages/asset-registry";
+import ControlsDiagnosticsPage from "@/pages/controls-diagnostics";
+import RiskControlsCoveragePage from "@/pages/risk-controls-coverage";
+import ControlQualityAnalysisPage from "@/pages/control-quality-analysis";
+import RegulationControlsCoveragePage from "@/pages/regulation-controls-coverage";
 import { AssetRegistryProvider } from "@/contexts/AssetRegistryContext";
 import { RiskAssessmentProvider } from "@/contexts/RiskAssessmentContext";
 import { IssueManagementProvider } from "@/contexts/IssueManagementContext";
@@ -76,6 +80,20 @@ function Router() {
 
   if (location === "/landing") {
     return <LandingPage />;
+  }
+
+  // Controls Diagnostics — full-page experience (no AppLayout)
+  if (location === "/controls-diagnostics") {
+    return <ControlsDiagnosticsPage />;
+  }
+  if (location === "/controls-diagnostics/risk-controls-coverage") {
+    return <RiskControlsCoveragePage />;
+  }
+  if (location === "/controls-diagnostics/control-quality-analysis") {
+    return <ControlQualityAnalysisPage />;
+  }
+  if (location === "/controls-diagnostics/regulation-controls-coverage") {
+    return <RegulationControlsCoveragePage />;
   }
 
   return (
