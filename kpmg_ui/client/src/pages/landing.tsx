@@ -228,8 +228,7 @@ export default function LandingPage() {
 
   return (
     <div className="landing-shell flex min-h-screen flex-col" style={{ fontFamily: "Arial, sans-serif" }}>
-      <header className="landing-hero relative overflow-hidden">
-        <div className="landing-nav relative z-10 w-full">
+      <div className="landing-nav sticky top-0 z-50 w-full">
         <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-4 lg:px-14">
           <div className="flex items-center gap-3">
             <span className="text-[18px] font-bold tracking-tight text-white">KPMG</span>
@@ -252,8 +251,9 @@ export default function LandingPage() {
             </Button>
           </div>
         </div>
-        </div>
+      </div>
 
+      <header className="landing-hero relative overflow-hidden">
         <div className="relative z-10 mx-auto grid w-full max-w-[1400px] gap-10 px-8 pb-18 pt-10 lg:grid-cols-[minmax(0,1.6fr)_380px] lg:px-14 lg:pb-20">
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/8 px-3 py-1.5">
