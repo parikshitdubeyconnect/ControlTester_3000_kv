@@ -19,8 +19,8 @@ export default function TraceNavBar({ breadcrumb, actions }: TraceNavBarProps) {
 
   return (
     <div
-      className="landing-nav relative z-10 w-full"
-      style={{ background: "rgba(10,14,26,0.88)", backdropFilter: "blur(12px)" }}
+      className="landing-nav sticky top-0 z-50 w-full"
+      style={{ background: "#0C233C", backdropFilter: "blur(12px)" }}
     >
       <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-4 lg:px-14">
         <div className="flex items-center gap-3">
