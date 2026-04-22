@@ -10,8 +10,7 @@ WORKDIR /kpmg_ui
 COPY package.json package-lock.json* ./
 
 # Install dependencies
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+RUN npm ci
 
 # Builder stage
 FROM base AS builder
