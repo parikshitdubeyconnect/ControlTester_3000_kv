@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   AlertTriangle,
   ArrowRight,
   BookOpen,
+  ChevronDown,
   Database,
   FileBarChart,
   FileSearch,
@@ -210,6 +212,10 @@ const HERO_SUMMARY = [
 export default function LandingPage() {
   const [, setLocation] = useLocation();
   const { logout } = useAuth();
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = (id: string) =>
+    setCollapsedSections((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const groupedSections = FEATURE_SECTIONS.map((section) => ({
     ...section,
@@ -291,18 +297,31 @@ export default function LandingPage() {
 
       <main className="flex-1 px-8 py-10 lg:px-14 lg:py-12">
         <div className="mx-auto max-w-[1400px] space-y-8">
-          {groupedSections.map((section) => (
-            <section key={section.id} className="landing-directory-panel rounded-[18px]">
-              <div className="flex flex-col gap-2 border-b border-[#00338D]/8 px-7 py-5 lg:flex-row lg:items-end lg:justify-between">
+          {groupedSections.map((section) => {
+            const isCollapsed = !!collapsedSections[section.id];
+            return (
+            <section key={section.id} className="landing-directory-panel rounded-[18px] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => toggleSection(section.id)}
+                aria-expanded={!isCollapsed}
+                className="w-full flex flex-col gap-2 border-b border-[#E2E6EF] bg-[#F4F6FA] px-7 py-5 text-left lg:flex-row lg:items-end lg:justify-between hover:bg-[#EEF1F6] transition-colors"
+              >
                 <div>
                   <p className="kpmg-section-label">{section.title}</p>
                   <h3 className="mt-2 text-[20px] font-bold text-[#0C233C]">{section.description}</h3>
                 </div>
-                <span className="landing-chip self-start rounded-full px-3.5 py-1.5 text-[11px] font-bold tracking-[0.12em] uppercase lg:self-auto">
-                  {section.items.length} modules
-                </span>
-              </div>
+                <div className="flex items-center gap-3 self-start lg:self-auto">
+                  <span className="landing-chip rounded-full px-3.5 py-1.5 text-[11px] font-bold tracking-[0.12em] uppercase">
+                    {section.items.length} modules
+                  </span>
+                  <ChevronDown
+                    className={`h-5 w-5 text-[#0C233C] transition-transform duration-200 ${isCollapsed ? "" : "rotate-180"}`}
+                  />
+                </div>
+              </button>
 
+              {!isCollapsed && (
               <div className="grid grid-cols-1 gap-5 p-6 md:grid-cols-2 xl:grid-cols-3">
                 {section.items.map((feature) => {
                   const Icon = feature.icon;
@@ -338,8 +357,10 @@ export default function LandingPage() {
                   );
                 })}
               </div>
+              )}
             </section>
-          ))}
+            );
+          })}
 
           <div className="flex items-center justify-between border-t border-[#00338D]/8 pt-6 pb-2">
             <p className="text-[11px] text-slate-400 uppercase tracking-[0.22em] font-semibold">
