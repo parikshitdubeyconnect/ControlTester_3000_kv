@@ -222,14 +222,14 @@ export default function LandingPage() {
       <header className="landing-hero relative overflow-hidden">
         <div className="landing-nav relative z-10 w-full">
         <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-4 lg:px-14">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 items-center rounded-[18px] bg-white px-3 shadow-[0_18px_36px_-30px_rgba(0,0,0,0.45)]">
-              <img src={logo} alt="KPMG" className="h-7 w-auto object-contain" />
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-[10px] font-bold uppercase tracking-[0.34em] text-[#ACEAFF]">TRACE workspace</p>
-              <p className="mt-1 text-[13px] font-semibold text-white">Agentic controls platform</p>
-            </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[18px] font-bold tracking-tight text-white">KPMG</span>
+            <span className="text-[#1E49E2] text-[20px] font-light select-none">|</span>
+            <span className="text-[18px] font-bold tracking-tight text-[#00B8F5]">TRACE</span>
+            <span className="hidden sm:flex items-center gap-1.5 ml-1 text-white/40 text-[13px]">
+              <span>/</span>
+              <span className="text-white/60">Agentic Controls Platform</span>
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Button
