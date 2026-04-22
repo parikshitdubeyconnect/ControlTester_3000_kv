@@ -86,9 +86,7 @@ export default function RegulationControlsCoveragePage() {
   return (
     <div className="min-h-screen bg-[#F0F2F7]">
       {/* ── Nav ── */}
-      <div style={{ background: "#0C233C" }}>
-        <TraceNavBar breadcrumb="Regulation–Controls Coverage" />
-      </div>
+      <TraceNavBar breadcrumb="Regulation–Controls Coverage" />
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"

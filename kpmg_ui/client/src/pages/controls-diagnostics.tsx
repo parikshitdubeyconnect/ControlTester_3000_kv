@@ -249,9 +249,7 @@ export default function ControlsDiagnosticsPage() {
   return (
     <div className="min-h-screen bg-[#F0F2F7]">
       {/* ── Nav ── */}
-      <div style={{ background: "#0C233C" }}>
-        <TraceNavBar breadcrumb="Controls Diagnostics" />
-      </div>
+      <TraceNavBar breadcrumb="Controls Diagnostics" />
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"

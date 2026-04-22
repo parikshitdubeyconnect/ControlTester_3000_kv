@@ -258,9 +258,7 @@ export default function ControlQualityAnalysisPage() {
   return (
     <div className="min-h-screen bg-[#F0F2F7]">
       {/* ── Nav ── */}
-      <div style={{ background: "#0C233C" }}>
-        <TraceNavBar breadcrumb="Control Quality Analysis" />
-      </div>
+      <TraceNavBar breadcrumb="Control Quality Analysis" />
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"

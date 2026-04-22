@@ -271,9 +271,7 @@ export default function RiskControlsCoveragePage() {
   return (
     <div className="min-h-screen bg-[#F0F2F7]">
       {/* ── Nav ── */}
-      <div style={{ background: "#0C233C" }}>
-        <TraceNavBar breadcrumb="Risk–Controls Coverage" />
-      </div>
+      <TraceNavBar breadcrumb="Risk–Controls Coverage" />
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"
