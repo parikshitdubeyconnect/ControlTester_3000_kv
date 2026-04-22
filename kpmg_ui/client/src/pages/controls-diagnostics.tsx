@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import TraceNavBar from "@/components/TraceNavBar";
 import {
   Play,
   CheckCircle,
@@ -247,6 +248,10 @@ export default function ControlsDiagnosticsPage() {
 
   return (
     <div className="min-h-screen bg-[#F0F2F7]">
+      {/* ── Nav ── */}
+      <div style={{ background: "#0C233C" }}>
+        <TraceNavBar breadcrumb="Controls Diagnostics" />
+      </div>
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"

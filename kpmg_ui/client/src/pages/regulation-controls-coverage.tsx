@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, Lock, Cpu, FileText } from "lucide-react";
+import TraceNavBar from "@/components/TraceNavBar";
 import { APEX_OBLIGATIONS } from "@/data/apex-obligations-data";
 
 // ─── Simple stat-only placeholder for AI-powered regulation coverage ──────────
@@ -84,6 +85,10 @@ export default function RegulationControlsCoveragePage() {
 
   return (
     <div className="min-h-screen bg-[#F0F2F7]">
+      {/* ── Nav ── */}
+      <div style={{ background: "#0C233C" }}>
+        <TraceNavBar breadcrumb="Regulation–Controls Coverage" />
+      </div>
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"
