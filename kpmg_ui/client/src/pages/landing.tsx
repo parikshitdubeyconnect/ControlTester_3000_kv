@@ -320,25 +320,21 @@ export default function LandingPage() {
                           </div>
                           <div>
                             <p className="kpmg-module-tag">{feature.functionLabel}</p>
-                            <h4 className="mt-1 text-[16px] font-bold text-[#0C233C]">{feature.title}</h4>
+                            <div className="mt-1 flex items-center gap-2">
+                              <h4 className="text-[16px] font-bold text-[#0C233C]">{feature.title}</h4>
+                              <span
+                                className="flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200 group-hover:translate-x-0.5"
+                                style={{ background: `${feature.accent}18`, color: feature.accent }}
+                              >
+                                <ArrowRight className="h-3 w-3" />
+                              </span>
+                            </div>
                           </div>
                         </div>
                         <span className="text-[12px] font-bold tracking-[0.18em] text-[#00338D]/48">{seq}</span>
                       </div>
 
                       <p className="mt-4 flex-1 text-[13px] leading-[1.72] text-slate-500">{feature.description}</p>
-
-                      <div className="mt-5 flex items-center justify-between border-t border-[#00338D]/8 pt-4">
-                        <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#00338D]">
-                          Open workspace
-                        </span>
-                        <span
-                          className="flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 group-hover:translate-x-0.5"
-                          style={{ background: `${feature.accent}18`, color: feature.accent }}
-                        >
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </span>
-                      </div>
                     </button>
                   );
                 })}
