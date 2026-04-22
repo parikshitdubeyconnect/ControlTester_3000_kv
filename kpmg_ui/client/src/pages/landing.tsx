@@ -182,7 +182,7 @@ const FEATURE_SECTIONS: FeatureSection[] = [
 
 const HERO_SUMMARY = [
   {
-    label: "Active workspaces",
+    label: "Solution Modules",
     value: String(FEATURE_CARDS.length),
     description: "Centralized access to retained modules across oversight, assessment, and reporting.",
   },
@@ -193,8 +193,8 @@ const HERO_SUMMARY = [
   },
   {
     label: "Library foundations",
-    value: "4",
-    description: "Regulatory, controls, frameworks, and asset context anchor downstream analysis.",
+    value: "5",
+    description: "Regulatory obligations library, controls library, risk register, asset register, and asset context anchors downstream analysis.",
   },
 ];
 
@@ -266,7 +266,7 @@ export default function LandingPage() {
 
           <aside className="kpmg-summary-panel rounded-[18px] p-6 text-white self-start mt-1">
             <p className="text-[9.5px] font-bold uppercase tracking-[0.34em] text-[#ACEAFF]">Operating summary</p>
-            <h2 className="mt-2.5 text-[22px] font-bold leading-tight text-white">Platform scope</h2>
+            <h2 className="mt-2.5 text-[22px] font-bold leading-tight text-white">Solutions Overview</h2>
             <div className="mt-5 space-y-0">
               {HERO_SUMMARY.map((item, index) => (
                 <div key={item.label} className={`py-4 ${index > 0 ? "kpmg-summary-stat" : ""}`}>
