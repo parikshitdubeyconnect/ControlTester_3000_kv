@@ -89,6 +89,15 @@ const FEATURE_CARDS: FeatureCard[] = [
     category: "Oversight and Libraries",
   },
   {
+    title: "Risk Register",
+    path: "/risk-register",
+    description: "Maintains a consolidated register of your enterprise risks — capturing ownership, inherent and residual ratings, control linkages, and live remediation status across the full risk landscape.",
+    functionLabel: "Risk intelligence",
+    accent: "#7213EA",
+    icon: Workflow,
+    category: "Oversight and Libraries",
+  },
+  {
     title: "Regulatory Testing",
     path: "/regulatory-testing",
     description: "Run regulation-versus-regulation comparisons or assess uploaded RCM documents against regulatory obligations from uploads or library sources.",
