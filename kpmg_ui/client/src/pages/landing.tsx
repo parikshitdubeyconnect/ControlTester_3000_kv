@@ -220,7 +220,8 @@ export default function LandingPage() {
   return (
     <div className="landing-shell flex min-h-screen flex-col" style={{ fontFamily: "Arial, sans-serif" }}>
       <header className="landing-hero relative overflow-hidden">
-        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-4 lg:px-14">
+        <div className="landing-nav relative z-10 w-full">
+        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-4 lg:px-14">
           <div className="flex items-center gap-4">
             <div className="flex h-12 items-center rounded-[18px] bg-white px-3 shadow-[0_18px_36px_-30px_rgba(0,0,0,0.45)]">
               <img src={logo} alt="KPMG" className="h-7 w-auto object-contain" />
@@ -241,6 +242,7 @@ export default function LandingPage() {
               Sign Out
             </Button>
           </div>
+        </div>
         </div>
 
         <div className="relative z-10 mx-auto grid w-full max-w-[1400px] gap-10 px-8 pb-18 pt-10 lg:grid-cols-[minmax(0,1.6fr)_380px] lg:px-14 lg:pb-20">
