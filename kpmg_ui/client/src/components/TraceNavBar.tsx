@@ -5,9 +5,10 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface TraceNavBarProps {
   breadcrumb?: string;
+  actions?: React.ReactNode;
 }
 
-export default function TraceNavBar({ breadcrumb }: TraceNavBarProps) {
+export default function TraceNavBar({ breadcrumb, actions }: TraceNavBarProps) {
   const [, setLocation] = useLocation();
   const { logout } = useAuth();
 
@@ -39,6 +40,7 @@ export default function TraceNavBar({ breadcrumb }: TraceNavBarProps) {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {actions}
           <Button
             variant="ghost"
             size="sm"
