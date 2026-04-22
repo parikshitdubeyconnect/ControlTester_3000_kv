@@ -10,111 +10,134 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowRight } from "lucide-react";
-import logo from "@/assets/kpmg (1).png";
+import { ArrowRight, ShieldCheck, Scale, AlertTriangle, Cpu, Lock, Activity } from "lucide-react";
 
-const GLOBE_POINTS = [
-  { top: "14%", left: "60%", size: 10, delay: "0s" },
-  { top: "19%", left: "47%", size: 7, delay: "0.2s" },
-  { top: "25%", left: "70%", size: 9, delay: "0.4s" },
-  { top: "29%", left: "37%", size: 6, delay: "0.1s" },
-  { top: "33%", left: "58%", size: 8, delay: "0.6s" },
-  { top: "38%", left: "67%", size: 7, delay: "0.3s" },
-  { top: "42%", left: "49%", size: 11, delay: "0.7s" },
-  { top: "47%", left: "74%", size: 8, delay: "0.5s" },
-  { top: "50%", left: "35%", size: 6, delay: "0.15s" },
-  { top: "55%", left: "57%", size: 10, delay: "0.4s" },
-  { top: "59%", left: "67%", size: 7, delay: "0.75s" },
-  { top: "63%", left: "43%", size: 8, delay: "0.25s" },
-  { top: "68%", left: "59%", size: 9, delay: "0.55s" },
-  { top: "72%", left: "74%", size: 6, delay: "0.35s" },
-  { top: "77%", left: "51%", size: 9, delay: "0.65s" },
+// ── Left panel: animated network / risk-tech visual ────────────────────────
+
+const NODES = [
+  { x: 18, y: 22, r: 5, color: "#00B8F5", delay: "0s" },
+  { x: 42, y: 14, r: 4, color: "#7213EA", delay: "0.4s" },
+  { x: 68, y: 28, r: 6, color: "#1E49E2", delay: "0.8s" },
+  { x: 82, y: 55, r: 4, color: "#00B8F5", delay: "0.2s" },
+  { x: 62, y: 68, r: 5, color: "#009A44", delay: "1s" },
+  { x: 30, y: 72, r: 4, color: "#7213EA", delay: "0.6s" },
+  { x: 14, y: 52, r: 6, color: "#098E7E", delay: "0.3s" },
+  { x: 50, y: 45, r: 8, color: "#00B8F5", delay: "0.1s" },
+  { x: 76, y: 82, r: 4, color: "#1E49E2", delay: "0.9s" },
+  { x: 34, y: 40, r: 3, color: "#009A44", delay: "0.5s" },
+  { x: 88, y: 34, r: 3, color: "#7213EA", delay: "0.7s" },
+  { x: 55, y: 80, r: 4, color: "#098E7E", delay: "1.1s" },
 ];
 
-function GlobeBackdrop() {
+const EDGES = [
+  [0, 6], [0, 1], [1, 7], [1, 2], [2, 3], [3, 7],
+  [7, 4], [7, 5], [4, 8], [5, 6], [3, 10], [4, 11],
+  [9, 7], [9, 5], [6, 9], [10, 2],
+];
+
+const FLOAT_CARDS = [
+  { icon: ShieldCheck, label: "Controls mapped", value: "1,259", color: "#009A44", x: "6%", y: "12%" },
+  { icon: Scale,       label: "Obligations active", value: "97",    color: "#1E49E2", x: "54%", y: "6%" },
+  { icon: AlertTriangle, label: "Risks identified", value: "380",  color: "#7213EA", x: "62%", y: "72%" },
+  { icon: Activity,    label: "Coverage score",    value: "84%",   color: "#098E7E", x: "4%",  y: "68%" },
+];
+
+function LeftPanel() {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div
-        className="absolute inset-0"
+    <div className="relative flex-1 flex flex-col justify-center overflow-hidden select-none"
+      style={{ background: "linear-gradient(145deg, #060e1a 0%, #0c1e36 40%, #0f2548 70%, #0a1a30 100%)" }}>
+
+      {/* Grid overlay */}
+      <div className="absolute inset-0 opacity-[0.07]"
         style={{
-          background:
-            "radial-gradient(circle at 78% 28%, rgba(122, 91, 255, 0.36), transparent 22%), radial-gradient(circle at 88% 56%, rgba(179, 115, 255, 0.24), transparent 20%), radial-gradient(circle at 62% 52%, rgba(0, 184, 245, 0.12), transparent 26%)",
-        }}
-      />
+          backgroundImage: "linear-gradient(#00B8F5 1px, transparent 1px), linear-gradient(90deg, #00B8F5 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }} />
 
-      <div className="absolute right-[-18%] top-1/2 hidden h-[780px] w-[780px] -translate-y-1/2 md:block lg:right-[-2%]">
-        <div
-          className="absolute inset-0 rounded-full opacity-95"
-          style={{
-            animation: "kpmg-globe-spin 46s linear infinite",
-            background:
-              "radial-gradient(circle at 45% 42%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.12) 14%, rgba(97,103,255,0.16) 30%, rgba(63,44,163,0.08) 64%, transparent 72%)",
-            filter: "blur(1px)",
-          }}
-        />
+      {/* Glow orbs */}
+      <div className="absolute rounded-full pointer-events-none" style={{ width: 500, height: 500, background: "radial-gradient(circle, rgba(114,19,234,0.22) 0%, transparent 70%)", filter: "blur(80px)", top: "-15%", right: "-10%" }} />
+      <div className="absolute rounded-full pointer-events-none" style={{ width: 400, height: 400, background: "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)", filter: "blur(80px)", bottom: "-10%", left: "5%" }} />
+      <div className="absolute rounded-full pointer-events-none" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(30,73,226,0.2) 0%, transparent 70%)", filter: "blur(60px)", top: "40%", left: "30%" }} />
 
+      {/* Network SVG */}
+      <svg
+        className="absolute inset-0 w-full h-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid slice"
+        style={{ opacity: 0.35 }}
+      >
+        {EDGES.map(([a, b], i) => (
+          <line
+            key={i}
+            x1={NODES[a].x} y1={NODES[a].y}
+            x2={NODES[b].x} y2={NODES[b].y}
+            stroke="#00B8F5"
+            strokeWidth="0.3"
+            strokeDasharray="1 1"
+            opacity={0.6}
+          />
+        ))}
+        {NODES.map((n, i) => (
+          <circle
+            key={i}
+            cx={n.x} cy={n.y} r={n.r * 0.4}
+            fill={n.color}
+            style={{ animation: `pulse 2.5s ease-in-out infinite`, animationDelay: n.delay }}
+          />
+        ))}
+      </svg>
+
+      {/* Floating stat cards */}
+      {FLOAT_CARDS.map(({ icon: Icon, label, value, color, x, y }, i) => (
         <div
-          className="absolute inset-[6%] rounded-full"
+          key={i}
+          className="absolute flex items-center gap-2.5 rounded-2xl border border-white/10 px-4 py-3"
           style={{
-            boxShadow:
-              "0 0 80px rgba(119, 99, 255, 0.4), 0 0 170px rgba(166, 107, 255, 0.18)",
-            border: "1px solid rgba(255,255,255,0.14)",
-            background:
-              "radial-gradient(circle at 42% 40%, rgba(255,255,255,0.22), rgba(255,255,255,0.02) 24%, rgba(89,101,255,0.12) 52%, rgba(95,54,255,0.26) 76%, rgba(172,109,255,0.32) 100%)",
-            overflow: "hidden",
+            left: x, top: y,
+            background: "rgba(12,35,60,0.75)",
+            backdropFilter: "blur(12px)",
+            boxShadow: `0 0 0 1px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4)`,
+            animation: `float-card ${2.8 + i * 0.4}s ease-in-out infinite alternate`,
           }}
         >
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(circle at 50% 50%, transparent 0 44%, rgba(255,255,255,0.08) 44.5%, transparent 45%), radial-gradient(circle at 50% 50%, transparent 0 58%, rgba(255,255,255,0.08) 58.5%, transparent 59%), radial-gradient(circle at 50% 50%, transparent 0 72%, rgba(255,255,255,0.07) 72.5%, transparent 73%)",
-            }}
-          />
-
-          <div className="absolute inset-y-[10%] left-1/2 w-[16%] -translate-x-1/2 rounded-full border border-white/10" />
-          <div className="absolute inset-y-[7%] left-1/2 w-[34%] -translate-x-1/2 rounded-full border border-white/10" />
-          <div className="absolute inset-y-[4%] left-1/2 w-[56%] -translate-x-1/2 rounded-full border border-white/10" />
-          <div className="absolute inset-y-[1%] left-1/2 w-[80%] -translate-x-1/2 rounded-full border border-white/10" />
-
-          <div className="absolute inset-x-[8%] top-[18%] h-[18%] rounded-full border border-white/10" />
-          <div className="absolute inset-x-[5%] top-[34%] h-[14%] rounded-full border border-white/10" />
-          <div className="absolute inset-x-[4%] top-[48%] h-[10%] rounded-full border border-white/10" />
-          <div className="absolute inset-x-[5%] top-[58%] h-[14%] rounded-full border border-white/10" />
-          <div className="absolute inset-x-[8%] top-[70%] h-[18%] rounded-full border border-white/10" />
-
-          <div
-            className="absolute inset-0 opacity-80"
-            style={{
-              backgroundImage:
-                "linear-gradient(115deg, transparent 22%, rgba(255,255,255,0.12) 24%, transparent 26%), linear-gradient(38deg, transparent 40%, rgba(255,255,255,0.08) 42%, transparent 44%), linear-gradient(145deg, transparent 64%, rgba(255,255,255,0.09) 66%, transparent 68%)",
-              animation: "kpmg-globe-spin-reverse 60s linear infinite",
-            }}
-          />
-
-          {GLOBE_POINTS.map((point, index) => (
-            <span
-              key={index}
-              className="absolute rounded-full bg-white animate-pulse"
-              style={{
-                top: point.top,
-                left: point.left,
-                width: point.size,
-                height: point.size,
-                animationDelay: point.delay,
-                boxShadow: "0 0 16px rgba(255,255,255,0.95), 0 0 28px rgba(103,99,255,0.6)",
-              }}
-            />
-          ))}
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl flex-shrink-0" style={{ background: color + "22", border: `1px solid ${color}44` }}>
+            <Icon className="h-4 w-4" style={{ color }} />
+          </div>
+          <div>
+            <p className="text-[18px] font-bold leading-none text-white">{value}</p>
+            <p className="text-[10px] text-white/50 mt-0.5 leading-none">{label}</p>
+          </div>
         </div>
+      ))}
+
+      {/* Central lock icon */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-20 w-20 items-center justify-center rounded-[28px] border border-white/10"
+        style={{ background: "rgba(0,184,245,0.08)", boxShadow: "0 0 60px rgba(0,184,245,0.15), 0 0 120px rgba(114,19,234,0.1)" }}>
+        <Lock className="h-8 w-8 text-[#00B8F5]" />
       </div>
 
-      <div className="absolute left-[-10%] top-[18%] h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.08),transparent_72%)] blur-3xl opacity-40" />
-      <div className="absolute right-[-12%] top-[8%] h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(169,126,255,0.18),transparent_68%)] blur-3xl opacity-45" />
-      <div className="absolute bottom-[-12%] right-[10%] h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(122,85,255,0.22),transparent_70%)] blur-3xl opacity-45" />
+      {/* Headline copy */}
+      <div className="absolute bottom-10 left-8 right-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-[#00B8F5] mb-3">Agentic Controls Platform</p>
+        <h2 className="text-[28px] font-bold leading-tight text-white max-w-xs">
+          Automate.<br />Detect.<br />Act.
+        </h2>
+        <p className="mt-3 text-[13px] leading-6 text-white/45 max-w-[280px]">
+          Continuous control monitoring, regulatory gap analysis, and audit-ready evidence — at machine speed.
+        </p>
+      </div>
+
+      <style>{`
+        @keyframes float-card {
+          from { transform: translateY(0px); }
+          to   { transform: translateY(-8px); }
+        }
+      `}</style>
     </div>
   );
 }
+
+// ── Main login page ─────────────────────────────────────────────────────────
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
@@ -153,22 +176,10 @@ export default function LoginPage() {
   function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setRegError("");
-    if (!regName.trim()) {
-      setRegError("Name is required.");
-      return;
-    }
-    if (!regEmail.trim()) {
-      setRegError("Email is required.");
-      return;
-    }
-    if (regPassword.length < 6) {
-      setRegError("Password must be at least 6 characters.");
-      return;
-    }
-    if (regPassword !== regConfirm) {
-      setRegError("Passwords do not match.");
-      return;
-    }
+    if (!regName.trim()) { setRegError("Name is required."); return; }
+    if (!regEmail.trim()) { setRegError("Email is required."); return; }
+    if (regPassword.length < 6) { setRegError("Password must be at least 6 characters."); return; }
+    if (regPassword !== regConfirm) { setRegError("Passwords do not match."); return; }
     setRegistering(true);
     const result = register(regName.trim(), regEmail.trim().toLowerCase(), regPassword);
     if (result.ok) {
@@ -181,183 +192,162 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden px-6 py-8"
-      style={{
-        background:
-          "linear-gradient(112deg, #0a1b31 0%, #102b4a 34%, #173c88 68%, #4c42d3 100%)",
-      }}
-    >
-      <GlobeBackdrop />
+    <div className="flex flex-col min-h-screen w-screen overflow-hidden" style={{ fontFamily: "Arial, sans-serif" }}>
 
-      <div className="relative z-10 w-full max-w-[560px]">
-        <div className="relative overflow-hidden rounded-[22px] border border-white/10 bg-[#172c49]/90 p-8 shadow-[0_34px_80px_-34px_rgba(0,0,0,0.72)] backdrop-blur-[18px] sm:p-10">
-          <div className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#7213EA_0%,#1E49E2_56%,#00B8F5_100%)]" />
-          <div className="mb-10 flex items-center gap-4">
-            <div className="flex h-12 items-center rounded-[14px] bg-white px-3.5 shadow-[0_18px_36px_-30px_rgba(0,0,0,0.55)]">
-              <img src={logo} alt="KPMG" className="h-7 w-auto object-contain" />
-            </div>
-            <div className="h-8 w-px bg-white/14" />
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#7FD2FF]">TRACE</p>
-              <p className="mt-1 text-[12px] font-medium text-[#B3C8EA]">Restricted workspace</p>
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-[44px] font-bold leading-none tracking-[-0.03em] text-white">Sign In</h1>
-            <p className="mt-4 max-w-[360px] text-[15px] leading-7 text-[#D7E4FA]">
-              Technology risk assessment, control testing, and reporting platform.
-            </p>
-            <p className="text-[15px] leading-7 text-[#D7E4FA]">Authorised users only.</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#A9C3E7]">
-                Username
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@bank.com"
-                required
-                className="h-14 rounded-[16px] border border-white/10 bg-[#E7EEF9] px-5 text-[16px] text-[#0C233C] placeholder:text-slate-500 focus:border-[#7C8DFF] focus:ring-[#7C8DFF]/25"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="password" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#A9C3E7]">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                required
-                className="h-14 rounded-[16px] border border-white/10 bg-[#E7EEF9] px-5 text-[16px] text-[#0C233C] placeholder:text-slate-500 focus:border-[#7C8DFF] focus:ring-[#7C8DFF]/25"
-              />
-            </div>
-
-            {loginError && <p className="text-sm text-[#FF9AA8]">{loginError}</p>}
-
-            <Button
-              type="submit"
-              disabled={loggingIn}
-              className="mt-2 h-14 w-full rounded-[16px] bg-[#1744A3] hover:bg-[#2552BE] text-white text-[16px] font-semibold shadow-[0_20px_38px_-24px_rgba(23,68,163,0.9)]"
-            >
-              {loggingIn ? "Signing in..." : "Sign In"}
-              {!loggingIn && <ArrowRight className="ml-2 h-4 w-4" />}
-            </Button>
-          </form>
-
-          <div className="mt-8 rounded-[16px] border border-white/8 bg-white/[0.03] px-4 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#7FD2FF]">Demo credentials</p>
-            <p className="mt-1 text-[13px] text-[#DDE8FA]">admin@bank.com / admin123</p>
-          </div>
-
-          <p className="mt-6 text-sm text-[#B8CAE6]">
-            New user?{" "}
-            <button
-              type="button"
-              className="font-semibold text-white hover:text-[#7FD2FF] transition-colors"
-              onClick={() => {
-                setShowRegister(true);
-                setRegError("");
-              }}
-            >
-              Create an account
-            </button>
-          </p>
-
-          <p className="mt-10 text-center text-[12px] leading-6 text-[#B3C8EA]">
-            @ 2026 KPMG India - TRACE confidential
-            <br />
-            Unauthorised access is prohibited.
-          </p>
+      {/* ── Top KPMG banner ── */}
+      <div className="flex-shrink-0 w-full flex items-center justify-between px-8 py-4 lg:px-14 z-20"
+        style={{ background: "rgba(6,14,26,0.96)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="flex items-center gap-3">
+          <span className="text-[18px] font-bold tracking-tight text-white">KPMG</span>
+          <span className="text-[#1E49E2] text-[20px] font-light select-none">|</span>
+          <span className="text-[18px] font-bold tracking-tight text-[#00B8F5]">TRACE</span>
+          <span className="hidden sm:flex items-center gap-1.5 ml-1 text-white/40 text-[13px]">
+            <span>/</span>
+            <span className="text-white/60">Agentic Controls Platform</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#009A44] bg-[rgba(0,154,68,0.1)] border border-[rgba(0,154,68,0.15)] px-2.5 py-1 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#009A44] animate-pulse" />
+            Secure
+          </span>
+          <span className="hidden sm:flex items-center gap-1.5 text-[11px] font-medium text-white/40 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
+            <Lock className="h-3 w-3" />
+            Restricted access
+          </span>
         </div>
       </div>
 
+      {/* ── Main split layout ── */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* Left visual panel — hidden on mobile */}
+        <div className="hidden lg:flex" style={{ width: "55%" }}>
+          <LeftPanel />
+        </div>
+
+        {/* Right login panel */}
+        <div
+          className="flex flex-1 flex-col items-center justify-center px-8 py-10 lg:px-14"
+          style={{ background: "#F0F4FA" }}
+        >
+          <div className="w-full max-w-[420px]">
+
+            {/* Card */}
+            <div className="relative overflow-hidden rounded-[24px] border border-[#D6E2F5] bg-white shadow-[0_24px_64px_-24px_rgba(12,35,60,0.18)] p-8 sm:p-10">
+              {/* Top accent bar */}
+              <div className="absolute inset-x-0 top-0 h-[3px] rounded-t-[24px]"
+                style={{ background: "linear-gradient(90deg, #7213EA 0%, #1E49E2 56%, #00B8F5 100%)" }} />
+
+              <div className="mb-8">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#E2EBF8] bg-[#F3F7FF] px-3 py-1.5 mb-5">
+                  <Cpu className="h-3.5 w-3.5 text-[#1E49E2]" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#1E49E2]">TRACE workspace</span>
+                </div>
+                <h1 className="text-[36px] font-bold leading-none tracking-[-0.02em] text-[#0C233C]">Sign In</h1>
+                <p className="mt-3 text-[14px] leading-6 text-[#5A6B82]">
+                  Access your agentic controls environment. Authorised users only.
+                </p>
+              </div>
+
+              <form onSubmit={handleLogin} className="flex flex-col gap-5">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="email" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">
+                    Email address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@bank.com"
+                    required
+                    className="h-12 rounded-[14px] border-[#D6E2F5] bg-[#F7FAFF] px-4 text-[15px] text-[#0C233C] placeholder:text-slate-400 focus:border-[#1E49E2] focus:ring-[#1E49E2]/20"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="password" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    required
+                    className="h-12 rounded-[14px] border-[#D6E2F5] bg-[#F7FAFF] px-4 text-[15px] text-[#0C233C] placeholder:text-slate-400 focus:border-[#1E49E2] focus:ring-[#1E49E2]/20"
+                  />
+                </div>
+
+                {loginError && (
+                  <p className="rounded-xl bg-red-50 border border-red-100 px-4 py-2.5 text-sm text-red-600">{loginError}</p>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={loggingIn}
+                  className="mt-1 h-12 w-full rounded-[14px] text-white text-[15px] font-semibold shadow-[0_12px_28px_-12px_rgba(30,73,226,0.55)]"
+                  style={{ background: "linear-gradient(135deg, #1E49E2 0%, #00338D 100%)" }}
+                >
+                  {loggingIn ? "Signing in…" : "Sign In"}
+                  {!loggingIn && <ArrowRight className="ml-2 h-4 w-4" />}
+                </Button>
+              </form>
+
+              <div className="mt-6 rounded-[14px] border border-[#E8F0FB] bg-[#F3F7FF] px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#1E49E2]">Demo credentials</p>
+                <p className="mt-1 text-[13px] text-[#334155]">admin@bank.com / admin123</p>
+              </div>
+
+              <p className="mt-6 text-sm text-[#7A8FA8]">
+                New user?{" "}
+                <button
+                  type="button"
+                  className="font-semibold text-[#1E49E2] hover:text-[#00338D] transition-colors"
+                  onClick={() => { setShowRegister(true); setRegError(""); }}
+                >
+                  Create an account
+                </button>
+              </p>
+            </div>
+
+            <p className="mt-6 text-center text-[11px] text-[#8FA3BC]">
+              © 2026 KPMG India — TRACE confidential · Unauthorised access is prohibited
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Register dialog ── */}
       <Dialog open={showRegister} onOpenChange={setShowRegister}>
-        <DialogContent className="sm:max-w-md border-white/10 bg-[#172c49] text-white">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Create an account</DialogTitle>
+            <DialogTitle>Create an account</DialogTitle>
           </DialogHeader>
-
           <form onSubmit={handleRegister} className="mt-2 flex flex-col gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="reg-name" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#A9C3E7]">
-                      Full name
-                    </Label>
-                    <Input
-                      id="reg-name"
-                      value={regName}
-                      onChange={(e) => setRegName(e.target.value)}
-                      placeholder="Jane Smith"
-                      required
-                      className="h-12 rounded-[16px] border border-white/10 bg-[#E7EEF9] text-[#0C233C] placeholder:text-slate-500"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="reg-email" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#A9C3E7]">
-                      Email
-                    </Label>
-                    <Input
-                      id="reg-email"
-                      type="email"
-                      value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="jane@example.com"
-                      required
-                      className="h-12 rounded-[16px] border border-white/10 bg-[#E7EEF9] text-[#0C233C] placeholder:text-slate-500"
-                    />
-                  </div>
-
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="reg-password" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#A9C3E7]">
-                Password
-              </Label>
-              <Input
-                id="reg-password"
-                type="password"
-                value={regPassword}
-                onChange={(e) => setRegPassword(e.target.value)}
-                placeholder="Min. 6 characters"
-                required
-                className="h-12 rounded-[16px] border border-white/10 bg-[#E7EEF9] text-[#0C233C] placeholder:text-slate-500"
-              />
+              <Label htmlFor="reg-name" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">Full name</Label>
+              <Input id="reg-name" value={regName} onChange={(e) => setRegName(e.target.value)} placeholder="Jane Smith" required className="h-12 rounded-[14px]" />
             </div>
-
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="reg-confirm" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#A9C3E7]">
-                Confirm password
-              </Label>
-              <Input
-                id="reg-confirm"
-                type="password"
-                value={regConfirm}
-                onChange={(e) => setRegConfirm(e.target.value)}
-                placeholder="Repeat password"
-                required
-                className="h-12 rounded-[16px] border border-white/10 bg-[#E7EEF9] text-[#0C233C] placeholder:text-slate-500"
-              />
+              <Label htmlFor="reg-email" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">Email</Label>
+              <Input id="reg-email" type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} placeholder="jane@example.com" required className="h-12 rounded-[14px]" />
             </div>
-
-            {regError && <p className="text-sm text-[#FF9AA8]">{regError}</p>}
-
-            <Button
-              type="submit"
-              className="mt-1 h-12 w-full rounded-[16px] bg-[#1744A3] hover:bg-[#2552BE] text-white border-0"
-              disabled={registering}
-            >
-              {registering ? "Creating account..." : "Create account"}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="reg-password" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">Password</Label>
+              <Input id="reg-password" type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} placeholder="Min. 6 characters" required className="h-12 rounded-[14px]" />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="reg-confirm" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">Confirm password</Label>
+              <Input id="reg-confirm" type="password" value={regConfirm} onChange={(e) => setRegConfirm(e.target.value)} placeholder="Repeat password" required className="h-12 rounded-[14px]" />
+            </div>
+            {regError && <p className="text-sm text-red-500">{regError}</p>}
+            <Button type="submit" className="mt-1 h-12 w-full rounded-[14px]" disabled={registering}>
+              {registering ? "Creating account…" : "Create account"}
             </Button>
           </form>
         </DialogContent>
