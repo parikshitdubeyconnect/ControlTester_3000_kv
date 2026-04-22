@@ -395,6 +395,97 @@ body, p, span, li {
   -webkit-backdrop-filter: blur(14px);
 }
 
+/* ── APEX-style feature cards ── */
+.apex-card {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #E2E6EF;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.apex-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-accent, #00338D);
+  border-radius: 16px 16px 0 0;
+}
+
+.apex-card:hover {
+  box-shadow: 0 16px 48px rgba(0,51,141,0.14), 0 4px 12px rgba(0,0,0,0.06);
+  transform: translateY(-4px);
+}
+
+.apex-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.apex-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.apex-card-number {
+  font-weight: 800;
+  font-size: 13px;
+  color: #E2E6EF;
+  letter-spacing: -0.5px;
+}
+
+.apex-card-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: #0C233C;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  letter-spacing: -0.3px;
+}
+
+.apex-card-description {
+  font-size: 14px;
+  color: #5A6478;
+  line-height: 1.65;
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.apex-card-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid #E2E6EF;
+  padding-top: 14px;
+}
+
+.apex-card-link {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.apex-card-link:hover {
+  background: color-mix(in srgb, var(--card-accent, #00338D) 8%, transparent);
+}
+
+/* keep old class for any stray references */
 .landing-feature-card {
   position: relative;
   overflow: hidden;

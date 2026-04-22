@@ -283,7 +283,7 @@ export default function LandingPage() {
       <main className="flex-1 px-8 py-10 lg:px-14 lg:py-12">
         <div className="mx-auto max-w-[1400px] space-y-8">
           {groupedSections.map((section) => (
-            <section key={section.id} className="landing-directory-panel rounded-[18px] overflow-hidden">
+            <section key={section.id} className="landing-directory-panel rounded-[18px]">
               <div className="flex flex-col gap-2 border-b border-[#00338D]/8 px-7 py-5 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <p className="kpmg-section-label">{section.title}</p>
@@ -294,7 +294,7 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-0 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-1 gap-5 p-6 md:grid-cols-2 xl:grid-cols-3">
                 {section.items.map((feature) => {
                   const Icon = feature.icon;
                   const seq = getSequence(feature.path);
@@ -304,37 +304,27 @@ export default function LandingPage() {
                       key={feature.path}
                       type="button"
                       onClick={() => setLocation(feature.path)}
-                      className="landing-feature-card card-interactive group flex min-h-[220px] flex-col border-t border-[#00338D]/8 px-7 py-6 text-left md:border-l md:first:border-l-0 xl:min-h-[236px]"
+                      className="apex-card card-interactive group flex flex-col text-left"
+                      style={{ ['--card-accent' as string]: feature.accent }}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="flex h-10 w-10 items-center justify-center rounded-2xl flex-shrink-0"
-                            style={{
-                              background: `${feature.accent}14`,
-                              border: `1px solid ${feature.accent}22`,
-                              color: feature.accent,
-                            }}
-                          >
-                            <Icon className="h-[17px] w-[17px]" />
-                          </div>
-                          <div>
-                            <p className="kpmg-module-tag">{feature.functionLabel}</p>
-                            <div className="mt-1 flex items-center gap-2">
-                              <h4 className="text-[16px] font-bold text-[#0C233C]">{feature.title}</h4>
-                              <span
-                                className="flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200 group-hover:translate-x-0.5"
-                                style={{ background: `${feature.accent}18`, color: feature.accent }}
-                              >
-                                <ArrowRight className="h-3 w-3" />
-                              </span>
-                            </div>
-                          </div>
+                      <div className="apex-card-top">
+                        <div
+                          className="apex-card-icon"
+                          style={{ background: feature.accent }}
+                        >
+                          <Icon className="h-[22px] w-[22px] text-white" />
                         </div>
-                        <span className="text-[12px] font-bold tracking-[0.18em] text-[#00338D]/48">{seq}</span>
+                        <span className="apex-card-number">{seq}</span>
                       </div>
-
-                      <p className="mt-4 flex-1 text-[13px] leading-[1.72] text-slate-500">{feature.description}</p>
+                      <h4 className="apex-card-title">{feature.title}</h4>
+                      <p className="apex-card-description">{feature.description}</p>
+                      <div className="apex-card-links">
+                        <span className="apex-card-link group-hover:translate-x-0.5 transition-transform duration-200"
+                          style={{ color: feature.accent }}>
+                          ▶ Enter workspace
+                          <ArrowRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </span>
+                      </div>
                     </button>
                   );
                 })}
