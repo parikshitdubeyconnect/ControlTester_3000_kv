@@ -282,26 +282,6 @@ export default function LandingPage() {
 
       <main className="flex-1 px-8 py-10 lg:px-14 lg:py-12">
         <div className="mx-auto max-w-[1400px] space-y-8">
-          <section className="dashboard-band rounded-[18px] px-7 py-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="kpmg-section-label text-[#1E49E2]">Workspace directory</p>
-                <h2 className="mt-2 text-[24px] font-bold text-[#0C233C]">Enterprise capabilities organized by operating band</h2>
-                <p className="mt-2 max-w-2xl text-[13px] leading-6 text-slate-500">
-                  Each entry below opens a retained TRACE module and states the core techno-functional role it plays in the operating model.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2.5 flex-shrink-0">
-                <span className="landing-chip rounded-full px-3.5 py-1.5 text-[11px] font-bold tracking-[0.12em] uppercase">
-                  {FEATURE_CARDS.length} active workspaces
-                </span>
-                <span className="landing-chip rounded-full px-3.5 py-1.5 text-[11px] font-bold tracking-[0.12em] uppercase">
-                  Improved navigation
-                </span>
-              </div>
-            </div>
-          </section>
-
           {groupedSections.map((section) => (
             <section key={section.id} className="landing-directory-panel rounded-[18px] overflow-hidden">
               <div className="flex flex-col gap-2 border-b border-[#00338D]/8 px-7 py-5 lg:flex-row lg:items-end lg:justify-between">
