@@ -89,15 +89,6 @@ const FEATURE_CARDS: FeatureCard[] = [
     category: "Oversight and Libraries",
   },
   {
-    title: "Settings",
-    path: "/settings",
-    description: "Configure model selection, workspace visibility, and application preferences used by the TRACE operating environment.",
-    functionLabel: "Platform configuration",
-    accent: "#5B6B82",
-    icon: Settings,
-    category: "Oversight and Libraries",
-  },
-  {
     title: "Regulatory Testing",
     path: "/regulatory-testing",
     description: "Run regulation-versus-regulation comparisons or assess uploaded RCM documents against regulatory obligations from uploads or library sources.",
