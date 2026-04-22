@@ -228,7 +228,7 @@ export default function LandingPage() {
             </div>
             <div className="hidden sm:block">
               <p className="text-[10px] font-bold uppercase tracking-[0.34em] text-[#ACEAFF]">TRACE workspace</p>
-              <p className="mt-1 text-[13px] font-semibold text-white">Enterprise control platform</p>
+              <p className="mt-1 text-[13px] font-semibold text-white">Agentic controls platform</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -249,14 +249,15 @@ export default function LandingPage() {
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/8 px-3 py-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-[#00B8F5] animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#ACEAFF]">Single-entry point</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#ACEAFF]">Landing point to the agentic solutions</span>
             </div>
             <h1 className="max-w-4xl text-[44px] font-bold leading-[1.02] tracking-[-0.02em] text-white sm:text-[56px]">
-              Centralized access to TRACE workspaces, analysis flows, and reporting outputs.
+              Automate. Detect. Act. Your agentic command centre for control risk and regulatory exposure.
             </h1>
             <p className="mt-6 max-w-2xl text-[15px] leading-7 text-[#E4EEFB]">
-              Move directly into the required workspace to manage regulatory content, execute testing and assessment
-              workflows, and retrieve structured outputs through a clearer enterprise operating shell.
+              TRACE deploys autonomous agents across your control environment — continuously surfacing imminent risks,
+              closing regulatory gaps before they escalate, and generating audit-ready evidence at machine speed.
+              Move into any workspace to orchestrate testing, assessment, and reporting through a single agentic operating shell.
             </p>
             <p className="mt-8 text-[12px] font-semibold uppercase tracking-[0.22em] text-[#C8D8F0]">
               Select a workspace below to begin
@@ -367,7 +368,7 @@ export default function LandingPage() {
 
           <div className="flex items-center justify-between border-t border-[#00338D]/8 pt-6 pb-2">
             <p className="text-[11px] text-slate-400 uppercase tracking-[0.22em] font-semibold">
-              KPMG TRACE - Enterprise Control Platform
+              KPMG TRACE - Agentic Controls Platform
             </p>
             <p className="text-[11px] text-slate-400">
               {FEATURE_CARDS.length} modules - centralized operating environment
