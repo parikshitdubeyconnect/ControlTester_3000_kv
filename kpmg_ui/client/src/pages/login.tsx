@@ -143,7 +143,7 @@ export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { user, login, register } = useAuth();
 
-  const [email, setEmail] = useState("admin@bank.com");
+  const [email, setEmail] = useState("kpmguser");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
@@ -256,15 +256,15 @@ export default function LoginPage() {
               <form onSubmit={handleLogin} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="email" className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A6B82]">
-                    Email address
+                    Login ID
                   </Label>
                   <Input
                     id="email"
-                    type="email"
-                    autoComplete="email"
+                    type="text"
+                    autoComplete="username"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@bank.com"
+                    placeholder="kpmguser"
                     required
                     className="h-12 rounded-[14px] border-[#D6E2F5] bg-[#F7FAFF] px-4 text-[15px] text-[#0C233C] placeholder:text-slate-400 focus:border-[#1E49E2] focus:ring-[#1E49E2]/20"
                   />
@@ -303,7 +303,7 @@ export default function LoginPage() {
 
               <div className="mt-6 rounded-[14px] border border-[#E8F0FB] bg-[#F3F7FF] px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#1E49E2]">Demo credentials</p>
-                <p className="mt-1 text-[13px] text-[#334155]">admin@bank.com / admin123</p>
+                <p className="mt-1 text-[13px] text-[#334155]">kpmguser / admin123</p>
               </div>
 
               <p className="mt-6 text-sm text-[#7A8FA8]">

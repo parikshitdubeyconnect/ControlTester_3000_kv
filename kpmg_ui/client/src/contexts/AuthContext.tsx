@@ -17,8 +17,8 @@ const USERS_KEY = "ct3_users";
 const SESSION_KEY = "ct3_current_user";
 
 const DEFAULT_ADMIN: StoredUser = {
-  email: "admin@bank.com",
-  name: "Admin",
+  email: "kpmguser",
+  name: "KPMG User",
   password: "admin123",
 };
 
@@ -36,9 +36,11 @@ function saveUsers(users: StoredUser[]) {
 }
 
 function seedDefaultAdmin() {
-  const users = loadUsers();
+  const users = loadUsers().filter((u) => u.email !== "admin@bank.com");
   if (!users.find((u) => u.email === DEFAULT_ADMIN.email)) {
     saveUsers([DEFAULT_ADMIN, ...users]);
+  } else {
+    saveUsers(users);
   }
 }
 
