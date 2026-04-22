@@ -228,10 +228,13 @@ export default function LoginPage() {
 
         {/* Right login panel */}
         <div
-          className="flex flex-1 flex-col items-center justify-center px-8 py-10 lg:px-14"
-          style={{ background: "#F0F4FA" }}
+          className="relative flex flex-1 flex-col items-center justify-center px-8 py-10 lg:px-14 overflow-hidden"
+          style={{ background: "linear-gradient(145deg, #060e1a 0%, #0c1e36 40%, #0f2548 70%, #0a1a30 100%)" }}
         >
-          <div className="w-full max-w-[420px]">
+          {/* Subtle orbs for continuity with the left panel */}
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 400, height: 400, background: "radial-gradient(circle, rgba(30,73,226,0.18) 0%, transparent 70%)", filter: "blur(80px)", top: "-10%", right: "-10%" }} />
+          <div className="absolute rounded-full pointer-events-none" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(114,19,234,0.14) 0%, transparent 70%)", filter: "blur(60px)", bottom: "-5%", left: "-5%" }} />
+          <div className="relative z-10 w-full max-w-[420px]">
 
             {/* Card */}
             <div className="relative overflow-hidden rounded-[24px] border border-[#D6E2F5] bg-white shadow-[0_24px_64px_-24px_rgba(12,35,60,0.18)] p-8 sm:p-10">
@@ -315,7 +318,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <p className="mt-6 text-center text-[11px] text-[#8FA3BC]">
+            <p className="mt-6 text-center text-[11px] text-white/40">
               © 2026 KPMG India — TRACE confidential · Unauthorised access is prohibited
             </p>
           </div>
