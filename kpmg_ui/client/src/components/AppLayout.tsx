@@ -52,7 +52,7 @@ function readHiddenPages(): string[] {
 export default function AppLayout({ children }: AppLayoutProps) {
   const [location, setLocation] = useLocation();
   const { user } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [hiddenPages, setHiddenPages] = useState<string[]>(readHiddenPages);
 
   const userInitial = user?.name?.[0]?.toUpperCase() ?? "U";
