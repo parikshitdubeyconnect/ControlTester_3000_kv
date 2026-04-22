@@ -305,7 +305,7 @@ export default function LandingPage() {
                 type="button"
                 onClick={() => toggleSection(section.id)}
                 aria-expanded={!isCollapsed}
-                className="w-full flex flex-col gap-2 border-b border-[#E2E6EF] bg-[#F4F6FA] px-7 py-5 text-left lg:flex-row lg:items-end lg:justify-between hover:bg-[#EEF1F6] transition-colors"
+                className="w-full flex flex-col gap-2 border-b border-[#E2E6EF] bg-[#FAFBFD] px-7 py-5 text-left lg:flex-row lg:items-end lg:justify-between hover:bg-[#F4F6FA] transition-colors"
               >
                 <div>
                   <p className="kpmg-section-label">{section.title}</p>
