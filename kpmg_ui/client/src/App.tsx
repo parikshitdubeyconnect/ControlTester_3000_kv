@@ -33,6 +33,7 @@ import ControlsDiagnosticsPage from "@/pages/controls-diagnostics";
 import RiskControlsCoveragePage from "@/pages/risk-controls-coverage";
 import ControlQualityAnalysisPage from "@/pages/control-quality-analysis";
 import RegulationControlsCoveragePage from "@/pages/regulation-controls-coverage";
+import Control360Page from "@/pages/control-360";
 import { AssetRegistryProvider } from "@/contexts/AssetRegistryContext";
 import { RiskAssessmentProvider } from "@/contexts/RiskAssessmentContext";
 import { IssueManagementProvider } from "@/contexts/IssueManagementContext";
@@ -94,6 +95,9 @@ function Router() {
   }
   if (location === "/controls-diagnostics/regulation-controls-coverage") {
     return <RegulationControlsCoveragePage />;
+  }
+  if (location.startsWith("/control-360/") || location === "/control-360") {
+    return <Control360Page />;
   }
 
   return (

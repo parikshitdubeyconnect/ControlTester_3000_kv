@@ -583,7 +583,14 @@ export default function ControlQualityAnalysisPage() {
                         const trunc = c.text.length > 100 ? c.text.substring(0, 100) + "…" : c.text;
                         return (
                           <tr key={c.id} className="border-b border-[#E2E6EF] hover:bg-[#FAFBFD] transition-colors last:border-0">
-                            <td className="px-4 py-3 font-bold text-[#00338D] text-[12px] whitespace-nowrap">{c.id}</td>
+                            <td className="px-4 py-3 font-bold text-[12px] whitespace-nowrap">
+                              <button
+                                onClick={() => navigate(`/control-360/${c.id}`)}
+                                className="text-[#00338D] hover:text-[#1E49E2] hover:underline cursor-pointer"
+                              >
+                                {c.id}
+                              </button>
+                            </td>
                             <td className="px-4 py-3 text-[13px] text-[#3D4A5C] max-w-[280px] leading-snug">{trunc}</td>
                             <td className="px-4 py-3 text-[12px] text-[#3D4A5C] whitespace-nowrap">{c.area}</td>
                             <td className="px-3 py-3 text-center"><DimCheck present={c.who} /></td>
