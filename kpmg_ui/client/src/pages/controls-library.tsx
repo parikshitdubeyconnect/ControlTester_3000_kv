@@ -101,6 +101,29 @@ function ragFromScore(score: number): "green" | "amber" | "red" {
   return score >= 5 ? "green" : score === 4 ? "amber" : "red";
 }
 
+// Keyword-driven 5W1H heuristic. Used as a fallback when the FastAPI
+// /quality-analysis endpoint is unreachable (e.g. static Vercel deploy) or
+// returns no results — so the tab always populates something meaningful.
+const W1H_PATTERNS: Record<keyof W1HResult, RegExp> = {
+  who: /\b(manager|analyst|team|committee|officer|owner|department|function|unit|head of|chief|director|administrator|staff|personnel|reviewer|approver|custodian|operator|senior|lead|board|treasurer|controller)\b/i,
+  what: /\b(review(s|ed|ing)?|verif(y|ies|ied)|validat(e|es|ed|ion)|approv(e|es|ed|al)|perform(s|ed)?|ensure(s|d)?|check(s|ed|ing)?|monitor(s|ed|ing)?|reconcil(e|es|ed|iation)|process(es|ed)?|assess(es|ed|ment)?|test(s|ed|ing)?|complet(e|ed)|execut(e|ed)|investigat(e|ed)|authoris(e|ed)|authoriz(e|ed))\b/i,
+  where: /\b(system|platform|module|application|register|database|environment|portal|dashboard|tool|ledger|workflow|sharepoint|repository|server|cloud|network|ERP|GRC|within the|in the)\b/i,
+  how: /\b(by |through |via |using |in accordance with|per the|following the|based on|against the|pursuant to|procedure|methodology|process|framework|standard|policy|protocol|control matrix|checklist|workflow)\b/i,
+  when: /\b(daily|weekly|monthly|quarterly|annually|yearly|bi-annually|semi-annually|every|each|prior to|after the|upon|before|following|within \d+|at least (once|twice)|on (a )?(daily|weekly|monthly|quarterly|annual) basis|real[- ]time|continuously|as required|ad hoc|scheduled)\b/i,
+  why: /\b(to ensure|to prevent|to mitigate|to verify|to detect|to maintain|to comply|for compliance|in order to|so that|to protect|to support|to reduce|to manage|to safeguard|to address|purpose of)\b/i,
+};
+
+function analyzeW1HClientSide(text: string): W1HResult {
+  const t = (text || "").replace(/\s+/g, " ");
+  const r = {} as W1HResult;
+  for (const k of W1H_KEYS) r[k] = W1H_PATTERNS[k].test(t);
+  return r;
+}
+
+function scoreFromW1H(w: W1HResult): number {
+  return W1H_KEYS.reduce((n, k) => n + (w[k] ? 1 : 0), 0);
+}
+
 function exportQualityCSV(controls: CtrlW1H[]) {
   const header = ["Control ID","Control Name","Process Area","WHO","WHAT","WHERE","HOW","WHEN","WHY","Score","RAG"];
   const rows = controls.map(c => [
@@ -606,6 +629,31 @@ export default function ControlsLibraryPage() {
     allControls: ExtractedControl[] = [],
   ) => {
     if (controls.length === 0) return;
+
+    const ctrlMap = new Map(allControls.map(c => [c.control_id, c]));
+
+    const buildFromHeuristic = (): CtrlW1H[] =>
+      controls.map(c => {
+        const ctrl = ctrlMap.get(c.control_id) ?? {} as any;
+        const text = `${c.name || ""} ${c.description || ""}`.trim();
+        const w1h = analyzeW1HClientSide(text);
+        const score = scoreFromW1H(w1h);
+        return {
+          control_id: c.control_id,
+          control_name: c.name || ctrl.control_name || c.control_id,
+          description: c.description ?? ctrl.description ?? "",
+          document_reference: ctrl.document_reference ?? "",
+          domain: ctrl.domain ?? "",
+          control_type: ctrl.control_type ?? "",
+          keywords: ctrl.keywords ?? [],
+          specificity_level: ctrl.specificity_level ?? "",
+          mapped_obligations: ctrl.mapped_obligations ?? [],
+          w1h,
+          score,
+          rag: ragFromScore(score),
+        } as CtrlW1H;
+      });
+
     try {
       const res = await fetch("/api/controls-library/quality-analysis", {
         method: "POST",
@@ -614,9 +662,28 @@ export default function ControlsLibraryPage() {
       });
       if (!res.ok) throw new Error(`Quality analysis HTTP ${res.status}`);
       const data = await res.json();
-      const ctrlMap = new Map(allControls.map(c => [c.control_id, c]));
-      const merged: CtrlW1H[] = (data.results ?? []).map((r: any) => {
+      const apiResults = Array.isArray(data.results) ? data.results : [];
+      if (apiResults.length === 0) {
+        // API reachable but returned nothing → fall back to client-side heuristic
+        setCtrlsW1H(buildFromHeuristic());
+        return;
+      }
+      const merged: CtrlW1H[] = apiResults.map((r: any) => {
         const ctrl = ctrlMap.get(r.control_id) ?? {} as any;
+        const text = `${r.control_name || ctrl.control_name || ""} ${ctrl.description || ""}`.trim();
+        // If the API skipped any 5W1H fields, fill them in client-side so
+        // the analysis is never blank.
+        const hasAny = ["who","what","where","how","when","why"].some(k => typeof r[k] === "boolean");
+        const derived = hasAny ? null : analyzeW1HClientSide(text);
+        const w1h: W1HResult = {
+          who:   typeof r.who   === "boolean" ? r.who   : derived?.who   ?? false,
+          what:  typeof r.what  === "boolean" ? r.what  : derived?.what  ?? false,
+          where: typeof r.where === "boolean" ? r.where : derived?.where ?? false,
+          how:   typeof r.how   === "boolean" ? r.how   : derived?.how   ?? false,
+          when:  typeof r.when  === "boolean" ? r.when  : derived?.when  ?? false,
+          why:   typeof r.why   === "boolean" ? r.why   : derived?.why   ?? false,
+        };
+        const score = typeof r.score === "number" ? r.score : scoreFromW1H(w1h);
         return {
           control_id: r.control_id,
           control_name: r.control_name ?? ctrl.control_name ?? r.control_id,
@@ -627,14 +694,15 @@ export default function ControlsLibraryPage() {
           keywords: ctrl.keywords ?? [],
           specificity_level: ctrl.specificity_level ?? "",
           mapped_obligations: ctrl.mapped_obligations ?? [],
-          w1h: { who: r.who ?? false, what: r.what ?? false, where: r.where ?? false, how: r.how ?? false, when: r.when ?? false, why: r.why ?? false },
-          score: r.score ?? 0,
-          rag: r.rag ?? "red",
+          w1h,
+          score,
+          rag: r.rag ?? ragFromScore(score),
         } as CtrlW1H;
       });
       setCtrlsW1H(merged);
     } catch (err) {
-      console.warn("Quality analysis failed:", err);
+      console.warn("Quality analysis API unavailable — running client-side heuristic:", err);
+      setCtrlsW1H(buildFromHeuristic());
     }
   }, []);
 

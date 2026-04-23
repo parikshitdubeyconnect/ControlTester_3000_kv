@@ -51,9 +51,9 @@ COPY --from=deps /kpmg_ui/node_modules ./node_modules
 # Create directories for vectorstore data
 RUN mkdir -p /kpmg_ui/saved_global_vectorstore /kpmg_ui/saved_company_vectorstore /kpmg_ui/chat_attachment_vectorstore /kpmg_ui/chat_attachments
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 appuser && \
+# Create non-root user (Alpine BusyBox flags)
+RUN addgroup -S -g 1001 nodejs && \
+    adduser -S -u 1001 -G nodejs appuser && \
     chown -R appuser:nodejs /kpmg_ui
 
 USER appuser

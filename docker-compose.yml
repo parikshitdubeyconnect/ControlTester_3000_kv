@@ -1,6 +1,7 @@
 services:
   mongodb:
     image: mongo:7
+    platform: linux/amd64
     container_name: mongodb
     restart: unless-stopped
     ports:
@@ -14,6 +15,7 @@ services:
     build:
       context: .                    # must be root of repo
       dockerfile: api/Dockerfile
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -44,6 +46,7 @@ services:
     build:
       context: ./kpmg_ui
       dockerfile: Dockerfile
+    platform: linux/amd64
     container_name: agent_assess_web
     restart: unless-stopped
     ports:
