@@ -270,7 +270,7 @@ export default function LandingPage() {
               <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#ACEAFF]">Landing point to the agentic solutions</span>
             </div>
             <h1 className="max-w-4xl text-[44px] font-bold leading-[1.02] tracking-[-0.02em] text-white sm:text-[56px]">
-              Automate. Detect. Act. Your agentic command centre for control risk and regulatory exposure.
+              Automate. Detect. Act. Your agentic insight & command centre for control risk and regulatory exposure.
             </h1>
             <p className="mt-6 max-w-2xl text-[15px] leading-7 text-[#E4EEFB]">
               TRACE deploys autonomous agents across your control environment — continuously surfacing imminent risks,
