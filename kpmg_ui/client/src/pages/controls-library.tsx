@@ -1638,6 +1638,7 @@ export default function ControlsLibraryPage() {
                               <thead>
                                 <tr className="border-b bg-muted/20">
                                   <th className="text-left px-3 py-2 font-medium text-muted-foreground w-24">Control ID</th>
+                                  <th className="text-left px-3 py-2 font-medium text-muted-foreground">Control Title</th>
                                   <th className="text-left px-3 py-2 font-medium text-muted-foreground">Control Text</th>
                                   <th className="text-left px-3 py-2 font-medium text-muted-foreground w-28">Process Area</th>
                                   {W1H_KEYS.map(k => (
@@ -1651,13 +1652,16 @@ export default function ControlsLibraryPage() {
                               </thead>
                               <tbody>
                                 {filteredQuality.slice(0, 200).map((c, i) => (
-                                  <tr key={c.control_id ?? i} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                                  <tr key={c.control_id ?? i} title={c.description || c.control_name} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
                                     <td
                                       className="px-3 py-2 font-mono text-[10px] text-primary cursor-pointer hover:underline"
                                       onClick={() => setSelectedQualityControl(c)}
                                     >{c.control_id}</td>
                                     <td className="px-3 py-2 text-foreground leading-tight max-w-xs">
-                                      <span className="line-clamp-2" title={c.control_name}>{c.control_name}</span>
+                                      <span className="line-clamp-2">{c.control_name}</span>
+                                    </td>
+                                    <td className="px-3 py-2 text-muted-foreground leading-tight max-w-md">
+                                      <span className="line-clamp-2">{c.description}</span>
                                     </td>
                                     <td className="px-3 py-2 text-muted-foreground capitalize">{c.domain?.replace(/_/g, " ")}</td>
                                     {W1H_KEYS.map(k => (
@@ -1677,7 +1681,7 @@ export default function ControlsLibraryPage() {
                                   </tr>
                                 ))}
                                 {filteredQuality.length === 0 && (
-                                  <tr><td colSpan={10} className="text-center py-6 text-muted-foreground">No controls match filter.</td></tr>
+                                  <tr><td colSpan={11} className="text-center py-6 text-muted-foreground">No controls match filter.</td></tr>
                                 )}
                               </tbody>
                             </table>

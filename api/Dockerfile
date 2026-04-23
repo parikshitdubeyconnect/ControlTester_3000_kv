@@ -14,7 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY api/requirements.txt .
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --progress-bar off --prefer-binary -r requirements.txt
+    pip install --progress-bar off --prefer-binary \
+      --timeout 300 --retries 10 \
+      -r requirements.txt
 
 COPY utils ./utils
 COPY api ./api

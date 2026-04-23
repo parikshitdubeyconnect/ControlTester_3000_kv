@@ -50,7 +50,7 @@ services:
     container_name: agent_assess_web
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5050:5000"
     environment:
       - NODE_ENV=production
       - VITE_API_URL=${VITE_API_URL:-http://fastapi_api:8000}
