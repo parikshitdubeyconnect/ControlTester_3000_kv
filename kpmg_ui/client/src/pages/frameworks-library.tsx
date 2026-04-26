@@ -4,11 +4,7 @@ import {
   ChevronDown, FileText, Layers, PanelLeftClose, PanelLeftOpen,
   Network, AlertTriangle, Target, Tag,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import HeroSection from "@/components/HeroSection";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 // ── Colors ────────────────────────────────────────────────────────────────────
@@ -16,16 +12,16 @@ import { useToast } from "@/hooks/use-toast";
 const HUES = [220, 160, 30, 280, 10, 190, 120, 50, 340, 260, 90, 200];
 
 const RISK_CATEGORY_COLOR: Record<string, string> = {
-  operational:       "bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-950 dark:text-blue-300",
-  strategic:         "bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-950 dark:text-purple-300",
-  compliance:        "bg-red-100 text-red-700 border-red-300 dark:bg-red-950 dark:text-red-300",
-  financial:         "bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-950 dark:text-yellow-300",
-  reputational:      "bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-950 dark:text-orange-300",
-  technology:        "bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-950 dark:text-cyan-300",
-  people:            "bg-green-100 text-green-700 border-green-300 dark:bg-green-950 dark:text-green-300",
-  process:           "bg-indigo-100 text-indigo-700 border-indigo-300 dark:bg-indigo-950 dark:text-indigo-300",
-  quality_assurance: "bg-teal-100 text-teal-700 border-teal-300 dark:bg-teal-950 dark:text-teal-300",
-  methodology:       "bg-gray-100 text-gray-600 border-gray-300 dark:bg-gray-800 dark:text-gray-400",
+  operational:       "bg-[#EEF2FF] text-[#1E49E2] border-[#1E49E2]/30",
+  strategic:         "bg-[#F3F0FF] text-[#7213EA] border-[#7213EA]/30",
+  compliance:        "bg-[#FEE7E9] text-[#E5001B] border-[#E5001B]/30",
+  financial:         "bg-[#FFF6DC] text-[#A57600] border-[#EAAA00]/40",
+  reputational:      "bg-[#FFEDD5] text-[#C2410C] border-[#FB923C]/40",
+  technology:        "bg-[#E0F4FE] text-[#0369A1] border-[#00B8F5]/40",
+  people:            "bg-[#DCFCE7] text-[#009A44] border-[#009A44]/30",
+  process:           "bg-[#E0E7FF] text-[#4338CA] border-[#4338CA]/30",
+  quality_assurance: "bg-[#CCFBF1] text-[#098E7E] border-[#098E7E]/30",
+  methodology:       "bg-[#F0F2F7] text-[#5A6478] border-[#E2E6EF]",
 };
 
 function categoryHue(cat: string, allCats: string[]): number {
@@ -93,77 +89,76 @@ function ElementCard({
   const mergedElem = elem as MergedElement;
 
   return (
-    <div className="border rounded-lg overflow-hidden transition-all duration-200 hover:border-primary/40">
+    <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
       <div
-        className="flex items-start gap-2 p-3 cursor-pointer"
+        className="flex items-start gap-2 p-4 cursor-pointer"
         style={{ borderLeft: `3px solid hsl(${hue},70%,50%)` }}
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 flex-wrap mb-1">
-            <code className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1">
+          <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+            <code className="text-[10px] font-mono text-[#5A6478] bg-[#F0F2F7] rounded px-1.5 py-0.5">
               {elem.element_id}
             </code>
-            <Badge
-              variant="outline"
-              className={`text-[10px] ${RISK_CATEGORY_COLOR[elem.risk_category] ?? ""}`}
+            <span
+              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${RISK_CATEGORY_COLOR[elem.risk_category] ?? "bg-[#F0F2F7] text-[#5A6478] border-[#E2E6EF]"}`}
             >
               {elem.risk_category?.replace(/_/g, " ")}
-            </Badge>
-            <Badge variant="outline" className="text-[10px] text-muted-foreground">
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-[#E2E6EF] bg-white text-[#8492A6]">
               {elem.specificity_level}
-            </Badge>
+            </span>
             {isMerged && mergedElem.merged_from_count > 1 && (
-              <Badge variant="secondary" className="text-[10px]">
-                <Layers className="h-2.5 w-2.5 mr-0.5" />
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F0F2F7] text-[#5A6478] border border-[#E2E6EF] inline-flex items-center gap-1">
+                <Layers className="h-2.5 w-2.5" />
                 {mergedElem.merged_from_count} sources
-              </Badge>
+              </span>
             )}
           </div>
-          <p className="text-sm font-semibold leading-tight">{elem.element_name}</p>
-          <p className={`text-xs text-muted-foreground mt-1 ${expanded ? "" : "line-clamp-2"}`}>
+          <p className="text-[14px] font-bold text-[#0C233C] leading-tight">{elem.element_name}</p>
+          <p className={`text-[12px] text-[#5A6478] mt-1 leading-relaxed ${expanded ? "" : "line-clamp-2"}`}>
             {elem.description}
           </p>
         </div>
         <ChevronDown
-          className={`h-4 w-4 text-muted-foreground shrink-0 mt-1 transition-transform ${expanded ? "rotate-180" : ""}`}
+          className={`h-4 w-4 text-[#8492A6] shrink-0 mt-1 transition-transform ${expanded ? "rotate-180" : ""}`}
         />
       </div>
 
       {expanded && (
-        <div className="border-t bg-muted/20 px-3 pb-3 space-y-3 pt-2.5">
+        <div className="border-t border-[#E2E6EF] bg-[#F7F9FC] px-4 pb-4 space-y-3 pt-3">
 
           {/* Control Implications */}
           {elem.control_implications && (
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
+              <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[2px] mb-1.5 flex items-center gap-1">
                 <Target className="h-3 w-3" /> Control Implications
               </p>
-              <p className="text-xs text-foreground">{elem.control_implications}</p>
+              <p className="text-[12px] text-[#0C233C] leading-relaxed">{elem.control_implications}</p>
             </div>
           )}
 
           {/* Applicability */}
           {elem.applicability && (
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
+              <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[2px] mb-1.5 flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" /> When to Apply
               </p>
-              <p className="text-xs text-muted-foreground">{elem.applicability}</p>
+              <p className="text-[12px] text-[#5A6478] leading-relaxed">{elem.applicability}</p>
             </div>
           )}
 
           {/* Keywords */}
           {elem.keywords?.length > 0 && (
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
+              <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[2px] mb-1.5 flex items-center gap-1">
                 <Tag className="h-3 w-3" /> Keywords
               </p>
               <div className="flex flex-wrap gap-1">
                 {elem.keywords.map((kw, i) => (
                   <span
                     key={i}
-                    className="text-[10px] px-1.5 py-0.5 rounded-full border"
+                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
                     style={{
                       background: `hsl(${hue},60%,95%)`,
                       borderColor: `hsl(${hue},60%,80%)`,
@@ -179,19 +174,22 @@ function ElementCard({
 
           {/* Merged sources */}
           {isMerged && mergedElem.source_documents?.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Sources</p>
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[2px]">Sources</p>
               <div className="flex flex-wrap gap-1.5">
                 {mergedElem.source_documents.map((src, i) => (
-                  <Badge
+                  <span
                     key={i}
-                    variant={src.is_primary ? "default" : "outline"}
-                    className="text-[10px] max-w-[200px] truncate"
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full max-w-[200px] truncate border ${
+                      src.is_primary
+                        ? "bg-[#00338D] text-white border-[#00338D]"
+                        : "bg-white text-[#5A6478] border-[#E2E6EF]"
+                    }`}
                     title={`${src.framework_name} — ${src.filename}`}
                   >
                     {src.is_primary && <span className="mr-1">★</span>}
                     {src.framework_name || src.filename}
-                  </Badge>
+                  </span>
                 ))}
               </div>
             </div>
@@ -199,7 +197,7 @@ function ElementCard({
 
           {/* Source filename for non-merged */}
           {!isMerged && elem._source_filename && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-[12px] text-[#8492A6]">
               <FileText className="h-3 w-3 shrink-0" />
               <span>{elem._source_filename}</span>
             </div>
@@ -485,36 +483,17 @@ export default function FrameworksLibraryPage() {
     });
   };
 
+  // KPI tiles config (top accent bars match diagnostics palette)
+  const kpiTiles = [
+    { label: "Frameworks Uploaded", value: frameworkDocs.length, accent: "#098E7E", valueColor: "#098E7E" },
+    { label: "Total Elements", value: totalElements, accent: "#1E49E2", valueColor: "#1E49E2" },
+    { label: "Risk Categories", value: allCategories.length, accent: "#7213EA", valueColor: "#7213EA" },
+  ];
+
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="h-full flex flex-col bg-background overflow-hidden">
-
-      {/* ── Page header ── */}
-      <HeroSection
-        title="Frameworks Library"
-        subtitle="Upload quality & risk frameworks — 5W1H, ECOTM, PDCA, FMEA, and more"
-        icon={BookOpen}
-        actions={
-          <Button variant="ghost" size="icon" onClick={fetchDocs} title="Refresh" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10">
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-        }
-      />
-
-      {/* ── KPI strip ── */}
-      <div className="flex-shrink-0 grid grid-cols-3 gap-3 px-5 py-3 border-b">
-        {[
-          { label: "Frameworks Uploaded", value: frameworkDocs.length, gradient: "from-teal-500/20 to-cyan-500/20", border: "border-teal-500/20", text: "text-teal-400" },
-          { label: "Total Elements", value: totalElements, gradient: "from-blue-500/20 to-indigo-500/20", border: "border-blue-500/20", text: "text-blue-400" },
-          { label: "Risk Categories", value: allCategories.length, gradient: "from-purple-500/20 to-pink-500/20", border: "border-purple-500/20", text: "text-purple-400" },
-        ].map(({ label, value, gradient, border, text }) => (
-          <div key={label} className={`rounded-lg border bg-gradient-to-br ${gradient} ${border} p-3`}>
-            <p className={`text-2xl font-bold ${text}`}>{value}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">{label}</p>
-          </div>
-        ))}
-      </div>
+    <div className="h-full flex flex-col bg-[#F0F2F7] overflow-hidden">
 
       {/* ── Body ── */}
       <div className="flex-1 flex overflow-hidden">
@@ -522,22 +501,24 @@ export default function FrameworksLibraryPage() {
         {/* ── Left panel ── */}
         {leftPanelOpen && (
           <div
-            className="flex-shrink-0 flex flex-col border-r bg-card/20"
+            className="flex-shrink-0 flex flex-col border-r border-[#E2E6EF] bg-white"
             style={{ width: panelWidth }}
           >
             {/* Upload area */}
-            <div className="flex-shrink-0 p-3 border-b space-y-2">
+            <div className="flex-shrink-0 p-4 border-b border-[#E2E6EF] space-y-2.5 bg-[#F7F9FC]">
               <div
-                className="border-2 border-dashed rounded-lg p-3 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                className="border-2 border-dashed border-[#E2E6EF] rounded-xl p-4 text-center cursor-pointer hover:border-[#1E49E2]/60 hover:bg-white transition-colors bg-white"
                 onDrop={handleDrop}
                 onDragOver={e => e.preventDefault()}
                 onClick={() => document.getElementById("fw-file-input")?.click()}
               >
-                <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-1" />
-                <p className="text-xs text-muted-foreground">
-                  Drop framework files or <span className="text-primary underline">browse</span>
+                <div className="w-9 h-9 mx-auto rounded-xl bg-[#EEF2FF] flex items-center justify-center mb-2">
+                  <Upload className="h-4 w-4 text-[#1E49E2]" />
+                </div>
+                <p className="text-[12px] text-[#5A6478] leading-relaxed">
+                  Drop framework files or <span className="text-[#1E49E2] font-semibold underline">browse</span>
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">PDF, DOCX, TXT, MD, CSV, Excel, image</p>
+                <p className="text-[10px] text-[#8492A6] mt-1">PDF, DOCX, TXT, MD, CSV, Excel, image</p>
                 <input
                   id="fw-file-input"
                   type="file"
@@ -558,70 +539,72 @@ export default function FrameworksLibraryPage() {
               {uploadFiles.length > 0 && (
                 <div className="space-y-1 max-h-28 overflow-y-auto">
                   {uploadFiles.map((f, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-xs bg-muted/50 rounded px-2 py-1">
-                      <span className="flex-1 truncate">{f.name}</span>
+                    <div
+                      key={i}
+                      className="flex items-center gap-1.5 text-[11px] bg-white border border-[#E2E6EF] rounded-lg px-2.5 py-1.5"
+                    >
+                      <span className="flex-1 truncate text-[#0C233C] font-medium">{f.name}</span>
                       <button onClick={() => setUploadFiles(prev => prev.filter((_, j) => j !== i))}>
-                        <X className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+                        <X className="h-3 w-3 text-[#8492A6] hover:text-[#E5001B]" />
                       </button>
                     </div>
                   ))}
                 </div>
               )}
 
-              <Button
-                size="sm"
-                className="w-full h-8 text-xs"
+              <button
                 disabled={!uploadFiles.length || ingesting}
                 onClick={handleIngest}
+                className="w-full inline-flex items-center justify-center gap-2 bg-[#00338D] text-white px-4 py-2.5 rounded-xl font-bold text-[12px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#002265] transition-colors"
               >
                 {ingesting ? (
-                  <><RotateCcw className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Extracting…</>
+                  <><RotateCcw className="h-3.5 w-3.5 animate-spin" /> Extracting…</>
                 ) : (
-                  <><Upload className="h-3.5 w-3.5 mr-1.5" /> Upload & Extract</>
+                  <><Upload className="h-3.5 w-3.5" /> Upload &amp; Extract</>
                 )}
-              </Button>
+              </button>
             </div>
 
             {/* Document list */}
             <ScrollArea className="flex-1">
-              <div className="p-2 space-y-1.5">
+              <div className="p-3 space-y-2">
                 {docsLoading ? (
-                  <p className="text-xs text-muted-foreground text-center py-6">Loading…</p>
+                  <p className="text-[12px] text-[#8492A6] text-center py-6">Loading…</p>
                 ) : !frameworkDocs.length ? (
-                  <p className="text-xs text-muted-foreground text-center py-6 px-3">
+                  <p className="text-[12px] text-[#8492A6] text-center py-6 px-3 leading-relaxed">
                     No frameworks uploaded yet. Drop a framework document above to get started.
                   </p>
                 ) : (
                   frameworkDocs.map(doc => (
                     <div
                       key={doc.document_id}
-                      className={`group rounded-lg border p-2.5 cursor-pointer transition-colors ${
+                      className={`group rounded-xl border p-3 cursor-pointer transition-all duration-150 ${
                         selectedDoc?.document_id === doc.document_id
-                          ? "bg-primary/10 border-primary/40"
-                          : "hover:bg-muted/50"
+                          ? "bg-[#EEF2FF] border-[#1E49E2]"
+                          : "bg-white border-[#E2E6EF] hover:border-[#1E49E2]/40 hover:shadow-sm"
                       }`}
                       onClick={() => handleDocClick(doc)}
                     >
                       <div className="flex items-start gap-2">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold truncate">{doc.framework_name}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{doc.source_filename}</p>
-                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                            <Badge variant="secondary" className="text-[10px] h-4">
+                          <p className="text-[13px] font-bold text-[#0C233C] truncate">{doc.framework_name}</p>
+                          <p className="text-[10px] text-[#8492A6] truncate mt-0.5">{doc.source_filename}</p>
+                          <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EEF2FF] text-[#1E49E2]">
                               {doc.total_elements} elements
-                            </Badge>
+                            </span>
                             {doc.framework_type && (
-                              <Badge variant="outline" className="text-[10px] h-4 text-muted-foreground">
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-[#E2E6EF] text-[#5A6478]">
                                 {doc.framework_type}
-                              </Badge>
+                              </span>
                             )}
                           </div>
                           {doc.elements_by_category && Object.keys(doc.elements_by_category).length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1.5">
+                            <div className="flex flex-wrap gap-1 mt-2">
                               {Object.entries(doc.elements_by_category).slice(0, 3).map(([cat, count]) => (
                                 <span
                                   key={cat}
-                                  className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground border"
+                                  className="text-[10px] px-2 py-0.5 rounded-full bg-[#F0F2F7] text-[#5A6478] border border-[#E2E6EF]"
                                 >
                                   {cat.replace(/_/g, " ")} {count}
                                 </span>
@@ -630,7 +613,7 @@ export default function FrameworksLibraryPage() {
                           )}
                         </div>
                         <button
-                          className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all shrink-0"
+                          className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-[#FEE7E9] text-[#8492A6] hover:text-[#E5001B] transition-all shrink-0"
                           onClick={e => { e.stopPropagation(); handleDelete(doc.document_id); }}
                           title="Delete document"
                         >
@@ -644,29 +627,34 @@ export default function FrameworksLibraryPage() {
             </ScrollArea>
 
             {/* Footer */}
-            <div className="flex-shrink-0 p-2 border-t space-y-1.5">
+            <div className="flex-shrink-0 p-3 border-t border-[#E2E6EF] bg-[#F7F9FC]">
               {showClearConfirm ? (
-                <div className="rounded border border-destructive/30 bg-destructive/5 p-2 text-xs space-y-2">
-                  <p className="font-medium text-destructive">Clear entire frameworks library?</p>
+                <div className="rounded-xl border border-[#E5001B]/30 bg-[#FEE7E9]/50 p-3 text-[11px] space-y-2">
+                  <p className="font-bold text-[#E5001B]">Clear entire frameworks library?</p>
                   <div className="flex gap-1.5">
-                    <Button size="sm" variant="destructive" className="h-6 text-[10px] flex-1" onClick={handleClearLibrary} disabled={clearingLibrary}>
+                    <button
+                      className="flex-1 bg-[#E5001B] text-white px-3 py-1.5 rounded-lg font-bold text-[10px] disabled:opacity-50 hover:bg-[#B30015] transition-colors"
+                      onClick={handleClearLibrary}
+                      disabled={clearingLibrary}
+                    >
                       {clearingLibrary ? "Clearing…" : "Yes, clear"}
-                    </Button>
-                    <Button size="sm" variant="outline" className="h-6 text-[10px] flex-1" onClick={() => setShowClearConfirm(false)}>
+                    </button>
+                    <button
+                      className="flex-1 bg-white border border-[#E2E6EF] text-[#5A6478] px-3 py-1.5 rounded-lg font-bold text-[10px] hover:border-[#0C233C] transition-colors"
+                      onClick={() => setShowClearConfirm(false)}
+                    >
                       Cancel
-                    </Button>
+                    </button>
                   </div>
                 </div>
               ) : (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-full h-7 text-[11px] text-destructive border-destructive/30 hover:bg-destructive/10"
+                <button
+                  className="w-full inline-flex items-center justify-center gap-1.5 bg-white border border-[#E5001B]/30 text-[#E5001B] px-3 py-2 rounded-xl font-semibold text-[11px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#FEE7E9]/50 transition-colors"
                   disabled={!frameworkDocs.length}
                   onClick={() => setShowClearConfirm(true)}
                 >
-                  <Trash2 className="h-3 w-3 mr-1" /> Clear Library
-                </Button>
+                  <Trash2 className="h-3 w-3" /> Clear Library
+                </button>
               )}
             </div>
           </div>
@@ -675,26 +663,30 @@ export default function FrameworksLibraryPage() {
         {/* ── Resize divider ── */}
         {leftPanelOpen && (
           <div
-            className="w-1 flex-shrink-0 cursor-col-resize hover:bg-primary/30 transition-colors"
+            className="w-1 flex-shrink-0 cursor-col-resize hover:bg-[#1E49E2]/30 transition-colors"
             onMouseDown={onDividerMouseDown}
           />
         )}
 
         {/* ── Right panel ── */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#F0F2F7]">
 
-          {/* Right panel header */}
-          <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 border-b bg-card/20">
+          {/* Right panel header — filter strip */}
+          <div className="flex-shrink-0 bg-[#F7F9FC] border-b border-[#E2E6EF] px-5 py-3 flex items-center gap-3 flex-wrap">
             <button
               onClick={() => setLeftPanelOpen(!leftPanelOpen)}
-              className="p-1 rounded hover:bg-muted transition-colors"
+              className="p-1.5 rounded-lg bg-white border border-[#E2E6EF] hover:border-[#0C233C] transition-colors"
               title={leftPanelOpen ? "Hide panel" : "Show panel"}
             >
-              {leftPanelOpen ? <PanelLeftClose className="h-4 w-4 text-muted-foreground" /> : <PanelLeftOpen className="h-4 w-4 text-muted-foreground" />}
+              {leftPanelOpen ? (
+                <PanelLeftClose className="h-4 w-4 text-[#5A6478]" />
+              ) : (
+                <PanelLeftOpen className="h-4 w-4 text-[#5A6478]" />
+              )}
             </button>
 
-            {/* View toggle */}
-            <div className="flex rounded-md border overflow-hidden text-xs">
+            {/* View toggle — rounded pills */}
+            <div className="flex items-center gap-1 bg-white border border-[#E2E6EF] rounded-full p-1">
               {[
                 { id: "dashboard", label: "Overview" },
                 { id: "elements", label: "Elements" },
@@ -702,7 +694,11 @@ export default function FrameworksLibraryPage() {
               ].map(({ id, label }) => (
                 <button
                   key={id}
-                  className={`px-3 py-1 transition-colors ${rightPanelView === id ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+                  className={`px-4 py-1.5 rounded-full text-[12px] font-semibold transition-colors ${
+                    rightPanelView === id
+                      ? "bg-[#00338D] text-white"
+                      : "text-[#5A6478] hover:text-[#0C233C]"
+                  }`}
                   onClick={() => {
                     setRightPanelView(id as RightPanelView);
                     if (id === "graph" && !graphStats) fetchGraphStats();
@@ -716,14 +712,18 @@ export default function FrameworksLibraryPage() {
 
             {/* Sub-mode toggle (only in elements view) */}
             {rightPanelView === "elements" && (
-              <div className="flex rounded-md border overflow-hidden text-xs ml-1">
+              <div className="flex items-center gap-1 bg-white border border-[#E2E6EF] rounded-full p-1">
                 {[
                   { id: "document", label: selectedDoc ? selectedDoc.framework_name : "All" },
                   { id: "merged", label: "Merged" },
                 ].map(({ id, label }) => (
                   <button
                     key={id}
-                    className={`px-3 py-1 transition-colors ${elementsViewMode === id ? "bg-primary/20 text-primary font-medium" : "hover:bg-muted"}`}
+                    className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-colors max-w-[200px] truncate ${
+                      elementsViewMode === id
+                        ? "bg-[#7213EA] text-white"
+                        : "text-[#5A6478] hover:text-[#0C233C]"
+                    }`}
                     onClick={() => {
                       setElementsViewMode(id as ElementsViewMode);
                       if (id === "merged" && !mergedElements) fetchMerged();
@@ -738,14 +738,15 @@ export default function FrameworksLibraryPage() {
             {/* Filter controls (elements view) */}
             {rightPanelView === "elements" && (
               <div className="flex items-center gap-2 ml-auto">
-                <Input
+                <input
+                  type="text"
                   placeholder="Search elements…"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="h-7 text-xs w-44"
+                  className="h-8 text-[12px] w-48 bg-white border border-[#E2E6EF] rounded-lg px-3 text-[#0C233C] placeholder:text-[#8492A6] focus:outline-none focus:border-[#1E49E2] transition-colors"
                 />
                 <select
-                  className="h-7 text-xs rounded-md border bg-background px-2"
+                  className="h-8 text-[12px] rounded-lg border border-[#E2E6EF] bg-white px-3 text-[#0C233C] focus:outline-none focus:border-[#1E49E2] transition-colors"
                   value={categoryFilter}
                   onChange={e => setCategoryFilter(e.target.value)}
                 >
@@ -760,54 +761,159 @@ export default function FrameworksLibraryPage() {
 
           {/* Right panel content */}
           <ScrollArea className="flex-1">
-            <div className="p-4">
+            {/* ── Hero (scrolls with content) ── */}
+            <section
+              className="relative overflow-hidden"
+              style={{ background: "#0C233C", padding: "44px 0 40px" }}
+            >
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 460,
+                  height: 460,
+                  background: "radial-gradient(circle, rgba(114,19,234,0.3) 0%, transparent 70%)",
+                  filter: "blur(80px)",
+                  top: -140,
+                  right: -80,
+                }}
+              />
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 320,
+                  height: 320,
+                  background: "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)",
+                  filter: "blur(80px)",
+                  bottom: -100,
+                  left: "5%",
+                }}
+              />
+              <div className="relative max-w-[1400px] mx-auto px-8 md:px-12">
+                <div className="flex items-start justify-between gap-6 flex-wrap">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-4 h-0.5 rounded bg-[#00338D]" />
+                      <span className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase">
+                        Knowledge Base
+                      </span>
+                    </div>
+                    <h1
+                      className="font-bold text-white leading-tight mb-3"
+                      style={{ fontSize: "clamp(28px, 4vw, 44px)", letterSpacing: "-2px" }}
+                    >
+                      Frameworks Library
+                    </h1>
+                    <p className="text-[15px] text-white/60 max-w-[640px] leading-[1.7]">
+                      Upload quality &amp; risk frameworks — 5W1H, ECOTM, PDCA, FMEA, and more.
+                    </p>
+                  </div>
+                  <button
+                    onClick={fetchDocs}
+                    title="Refresh"
+                    className="inline-flex items-center gap-2 text-[13px] font-semibold text-white/65 bg-white/10 border border-white/20 px-3 py-2 rounded-full hover:bg-white/20 transition-colors"
+                  >
+                    <RotateCcw className="h-4 w-4" /> Refresh
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* ── KPI strip ── */}
+            <div className="bg-[#F0F2F7] border-b border-[#E2E6EF]">
+              <div className="max-w-[1400px] mx-auto px-8 md:px-12 py-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {kpiTiles.map(({ label, value, accent, valueColor }) => (
+                  <div
+                    key={label}
+                    className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <div
+                      className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+                      style={{ background: accent }}
+                    />
+                    <div className="font-bold text-[#0C233C] text-[15px] mt-1">{label}</div>
+                    <div
+                      className="font-bold text-[38px] leading-none tracking-tight mt-3"
+                      style={{ color: valueColor }}
+                    >
+                      {value}
+                    </div>
+                    <div className="text-[12px] text-[#8492A6] mt-2">
+                      {label === "Frameworks Uploaded"
+                        ? "documents in library"
+                        : label === "Total Elements"
+                        ? "extracted elements"
+                        : "distinct risk categories"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="max-w-[1400px] mx-auto px-8 md:px-12 py-8">
 
               {/* Overview */}
               {rightPanelView === "dashboard" && (
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
-                    <h2 className="text-sm font-semibold mb-3">Library Summary</h2>
+                    {/* Section head */}
+                    <div className="pb-4 border-b-2 border-[#E2E6EF] mb-5">
+                      <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">
+                        Overview
+                      </div>
+                      <div className="font-bold text-[#0C233C] text-[20px] tracking-tight">
+                        Library Summary
+                      </div>
+                    </div>
+
                     {allLoading ? (
-                      <p className="text-xs text-muted-foreground">Loading…</p>
+                      <p className="text-[13px] text-[#8492A6]">Loading…</p>
                     ) : !frameworkDocs.length ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <BookOpen className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                        <p className="text-sm font-medium">No frameworks uploaded yet</p>
-                        <p className="text-xs mt-1">Upload a framework document from the left panel to get started</p>
+                      <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-12 text-center">
+                        <div className="w-14 h-14 mx-auto rounded-2xl bg-[#F0F2F7] flex items-center justify-center mb-4">
+                          <BookOpen className="h-6 w-6 text-[#8492A6]" />
+                        </div>
+                        <p className="text-[15px] font-bold text-[#0C233C]">No frameworks uploaded yet</p>
+                        <p className="text-[13px] text-[#5A6478] mt-1.5 leading-relaxed">
+                          Upload a framework document from the left panel to get started
+                        </p>
                       </div>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-8">
                         {/* Category breakdown */}
                         {allCategories.length > 0 && (
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Elements by Risk Category</p>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-3">
+                              Elements by Risk Category
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {allCategories.map(cat => {
                                 const count = allElements.filter(e => e.risk_category === cat).length;
                                 const hue = categoryHue(cat, allCategories);
                                 return (
                                   <div
                                     key={cat}
-                                    className="flex items-center justify-between rounded-lg border bg-card/50 px-3 py-2 cursor-pointer hover:border-primary/40 transition-colors"
+                                    className="flex items-center justify-between bg-white rounded-2xl border border-[#E2E6EF] shadow-sm px-5 py-4 cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
                                     onClick={() => {
                                       setCategoryFilter(cat);
                                       setRightPanelView("elements");
                                       setElementsViewMode("document");
                                     }}
                                   >
+                                    <div className="flex items-center gap-3 min-w-0">
+                                      <div
+                                        className="w-1 h-9 rounded-full flex-shrink-0"
+                                        style={{ background: `hsl(${hue},70%,50%)` }}
+                                      />
+                                      <span className="text-[13px] font-bold text-[#0C233C] truncate">
+                                        {cat.replace(/_/g, " ")}
+                                      </span>
+                                    </div>
                                     <span
-                                      className="text-xs font-medium"
-                                      style={{ color: `hsl(${hue},60%,45%)` }}
-                                    >
-                                      {cat.replace(/_/g, " ")}
-                                    </span>
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-[10px] h-4"
+                                      className="text-[12px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
                                       style={{ background: `hsl(${hue},60%,92%)`, color: `hsl(${hue},60%,35%)` }}
                                     >
                                       {count}
-                                    </Badge>
+                                    </span>
                                   </div>
                                 );
                               })}
@@ -817,20 +923,26 @@ export default function FrameworksLibraryPage() {
 
                         {/* Per-framework breakdown */}
                         <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Uploaded Frameworks</p>
-                          <div className="space-y-2">
+                          <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-3">
+                            Uploaded Frameworks
+                          </div>
+                          <div className="space-y-3">
                             {frameworkDocs.map(doc => (
                               <div
                                 key={doc.document_id}
-                                className="rounded-lg border bg-card/50 p-3 cursor-pointer hover:border-primary/40 transition-colors"
+                                className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-5 cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
                                 onClick={() => handleDocClick(doc)}
                               >
-                                <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center justify-between gap-3">
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium truncate">{doc.framework_name}</p>
-                                    <p className="text-[11px] text-muted-foreground">{doc.framework_type} · {doc.total_elements} elements</p>
+                                    <p className="text-[15px] font-bold text-[#0C233C] truncate">{doc.framework_name}</p>
+                                    <p className="text-[12px] text-[#8492A6] mt-1">
+                                      {doc.framework_type} · {doc.total_elements} elements
+                                    </p>
                                   </div>
-                                  <Badge variant="outline" className="text-[10px] shrink-0">View</Badge>
+                                  <span className="text-[11px] font-bold text-[#1E49E2] bg-[#EEF2FF] px-3 py-1.5 rounded-full shrink-0">
+                                    View →
+                                  </span>
                                 </div>
                               </div>
                             ))}
@@ -844,76 +956,123 @@ export default function FrameworksLibraryPage() {
 
               {/* Elements view */}
               {rightPanelView === "elements" && (
-                <div className="space-y-2">
-                  {(elementsViewMode === "merged" ? mergedLoading : allLoading || detailLoading) ? (
-                    <p className="text-xs text-muted-foreground py-6 text-center">Loading…</p>
-                  ) : !filteredElements.length ? (
-                    <p className="text-xs text-muted-foreground py-6 text-center">
-                      {allElements.length ? "No elements match the current filter." : "No elements extracted yet. Upload a framework document."}
-                    </p>
-                  ) : (
-                    filteredElements.map(elem => (
-                      <ElementCard
-                        key={elem.element_id}
-                        elem={elem}
-                        allCategories={allCategories}
-                        isMerged={elementsViewMode === "merged"}
-                      />
-                    ))
-                  )}
+                <div>
+                  <div className="pb-4 border-b-2 border-[#E2E6EF] mb-5">
+                    <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">
+                      {elementsViewMode === "merged" ? "Cross-framework" : "Catalogue"}
+                    </div>
+                    <div className="font-bold text-[#0C233C] text-[20px] tracking-tight">
+                      {elementsViewMode === "merged"
+                        ? "Merged Elements"
+                        : selectedDoc
+                        ? selectedDoc.framework_name
+                        : "All Elements"}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {(elementsViewMode === "merged" ? mergedLoading : allLoading || detailLoading) ? (
+                      <p className="text-[13px] text-[#8492A6] py-6 text-center">Loading…</p>
+                    ) : !filteredElements.length ? (
+                      <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-12 text-center">
+                        <p className="text-[13px] text-[#8492A6]">
+                          {allElements.length
+                            ? "No elements match the current filter."
+                            : "No elements extracted yet. Upload a framework document."}
+                        </p>
+                      </div>
+                    ) : (
+                      filteredElements.map(elem => (
+                        <ElementCard
+                          key={elem.element_id}
+                          elem={elem}
+                          allCategories={allCategories}
+                          isMerged={elementsViewMode === "merged"}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
               )}
 
               {/* Graph stats view */}
               {rightPanelView === "graph" && (
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-sm font-semibold mb-1">Knowledge Graph</h2>
-                    <p className="text-xs text-muted-foreground">
+                <div className="space-y-6">
+                  <div className="pb-4 border-b-2 border-[#E2E6EF]">
+                    <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">
+                      Graph-RAG
+                    </div>
+                    <div className="font-bold text-[#0C233C] text-[20px] tracking-tight mb-2">
+                      Knowledge Graph
+                    </div>
+                    <p className="text-[13px] text-[#5A6478] leading-relaxed max-w-[760px]">
                       A knowledge graph is automatically built and saved after each framework document is ingested.
                       It is used for Graph-RAG enriched extraction of subsequent documents.
                     </p>
                   </div>
 
                   {graphLoading ? (
-                    <p className="text-xs text-muted-foreground">Loading graph stats…</p>
+                    <p className="text-[13px] text-[#8492A6]">Loading graph stats…</p>
                   ) : !graphStats ? (
-                    <div className="text-center py-10 text-muted-foreground">
-                      <Network className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                      <p className="text-sm">No graph data loaded yet</p>
-                      <Button size="sm" variant="outline" className="mt-3 text-xs" onClick={fetchGraphStats}>
+                    <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-12 text-center">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-[#F0F2F7] flex items-center justify-center mb-4">
+                        <Network className="h-6 w-6 text-[#8492A6]" />
+                      </div>
+                      <p className="text-[15px] font-bold text-[#0C233C]">No graph data loaded yet</p>
+                      <button
+                        className="mt-4 inline-flex items-center gap-2 bg-[#00338D] text-white px-6 py-2.5 rounded-xl font-bold text-[13px] hover:bg-[#002265] transition-colors"
+                        onClick={fetchGraphStats}
+                      >
                         Fetch Graph Stats
-                      </Button>
+                      </button>
                     </div>
                   ) : !graphStats.graph_exists ? (
-                    <div className="rounded-lg border border-dashed p-6 text-center text-muted-foreground">
-                      <Network className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                      <p className="text-sm font-medium">No graph saved yet</p>
-                      <p className="text-xs mt-1">Upload a framework document to generate the knowledge graph.</p>
+                    <div className="bg-white rounded-2xl border-2 border-dashed border-[#E2E6EF] p-12 text-center">
+                      <div className="w-12 h-12 mx-auto rounded-2xl bg-[#F0F2F7] flex items-center justify-center mb-3">
+                        <Network className="h-5 w-5 text-[#8492A6]" />
+                      </div>
+                      <p className="text-[15px] font-bold text-[#0C233C]">No graph saved yet</p>
+                      <p className="text-[13px] text-[#5A6478] mt-1.5 leading-relaxed">
+                        Upload a framework document to generate the knowledge graph.
+                      </p>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {graphStats.last_updated && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[12px] text-[#8492A6]">
                           Last updated: {new Date(graphStats.last_updated).toLocaleString()}
                         </p>
                       )}
-                      <div className="grid grid-cols-2 gap-3">
-                        {Object.entries(graphStats.stats).map(([key, val]) => (
-                          <div key={key} className="rounded-lg border bg-card/50 p-3">
-                            <p className="text-xl font-bold text-teal-400">{val}</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{key.replace(/_/g, " ")}</p>
-                          </div>
-                        ))}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {Object.entries(graphStats.stats).map(([key, val], idx) => {
+                          const accents = ["#098E7E", "#1E49E2", "#7213EA", "#EAAA00", "#00B8F5", "#E5001B"];
+                          const accent = accents[idx % accents.length];
+                          return (
+                            <div
+                              key={key}
+                              className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                            >
+                              <div
+                                className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+                                style={{ background: accent }}
+                              />
+                              <div
+                                className="font-bold text-[38px] leading-none tracking-tight mt-1"
+                                style={{ color: accent }}
+                              >
+                                {val}
+                              </div>
+                              <div className="text-[12px] text-[#8492A6] mt-2">{key.replace(/_/g, " ")}</div>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
+                      <button
+                        className="inline-flex items-center gap-2 bg-white border border-[#E2E6EF] text-[#0C233C] px-5 py-2.5 rounded-xl font-bold text-[13px] hover:border-[#0C233C] transition-colors"
                         onClick={fetchGraphStats}
                       >
-                        <RotateCcw className="h-3 w-3 mr-1.5" /> Refresh
-                      </Button>
+                        <RotateCcw className="h-3.5 w-3.5" /> Refresh
+                      </button>
                     </div>
                   )}
                 </div>

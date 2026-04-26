@@ -5,7 +5,6 @@ import {
   FileSearch,
   Settings,
   TestTube,
-  Scale,
   Library,
   ShieldCheck,
   ChevronLeft,
@@ -14,28 +13,29 @@ import {
   FileBarChart,
   BookOpen,
   AlertTriangle,
+  Activity,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
-import Footer from "@/components/Footer";
+import TraceNavBar from "@/components/TraceNavBar";
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
 export const HIDEABLE_TABS = [
-  { title: "Dashboard", fullTitle: "Dashboard", path: "/", icon: LayoutDashboard },
+  { title: "Dashboard", fullTitle: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { title: "Regulatory Library", fullTitle: "Regulatory Library", path: "/regulatory-library", icon: Library },
   { title: "Controls Library", fullTitle: "Controls Library", path: "/controls-library", icon: ShieldCheck },
   { title: "Frameworks Library", fullTitle: "Frameworks Library", path: "/frameworks-library", icon: BookOpen },
-  { title: "Regulatory Testing", fullTitle: "Regulatory Testing", path: "/regulatory-testing", icon: Scale },
-  { title: "Reports", fullTitle: "Reports", path: "/reports", icon: FileBarChart },
+  { title: "Controls Diagnostics", fullTitle: "Controls Diagnostics", path: "/controls-diagnostics", icon: Activity },
+  { title: "Controls Testing", fullTitle: "Controls Testing", path: "/control-testing", icon: TestTube },
   { title: "Risk Assessment", fullTitle: "Risk Assessment", path: "/risk-assessment", icon: FileSearch },
-  { title: "Final Report", fullTitle: "Final Report", path: "/evidence-assessment", icon: FileSearch },
-  { title: "Control Testing", fullTitle: "Control Testing", path: "/control-testing", icon: TestTube },
-  { title: "Chat", fullTitle: "AI Chat", path: "/chat", icon: MessageSquare },
+  { title: "Reports", fullTitle: "Reports", path: "/reports", icon: FileBarChart },
+  { title: "Final Reports", fullTitle: "Final Reports", path: "/evidence-assessment", icon: FileSearch },
   { title: "Issue Management", fullTitle: "Issue Management", path: "/issue-management", icon: AlertTriangle },
+  { title: "Chat", fullTitle: "AI Chat", path: "/chat", icon: MessageSquare },
 ];
 
 const COMING_SOON_TABS: typeof HIDEABLE_TABS = [];
@@ -185,8 +185,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
+        <TraceNavBar breadcrumb={(() => {
+          const match = [...HIDEABLE_TABS, SETTINGS_TAB].find(t => t.path === location);
+          return match?.fullTitle ?? "TRACE";
+        })()} />
         <main className="flex-1 overflow-hidden">{children}</main>
-        <Footer />
       </div>
     </div>
   );

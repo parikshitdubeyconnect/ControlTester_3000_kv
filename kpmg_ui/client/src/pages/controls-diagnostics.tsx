@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import TraceNavBar from "@/components/TraceNavBar";
 import Footer from "@/components/Footer";
 import {
   Play,
@@ -248,9 +247,7 @@ export default function ControlsDiagnosticsPage() {
   const gapCount = Math.round(obsCount * 0.09) || 4;
 
   return (
-    <div className="min-h-screen bg-[#F0F2F7]">
-      {/* ── Nav ── */}
-      <TraceNavBar breadcrumb="Controls Diagnostics" />
+    <div className="h-full overflow-auto bg-[#F0F2F7]">
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"
@@ -280,13 +277,6 @@ export default function ControlsDiagnosticsPage() {
           }}
         />
         <div className="relative max-w-[1100px] mx-auto px-8 md:px-12">
-          <button
-            onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 text-[13px] font-medium text-white/45 hover:text-[#00B8F5] transition-colors mb-7"
-          >
-            <ArrowLeft size={16} />
-            Back to Dashboard
-          </button>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-4 h-0.5 rounded bg-[#00338D]" />
             <span className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase">
@@ -297,7 +287,7 @@ export default function ControlsDiagnosticsPage() {
             className="font-bold text-white leading-tight mb-4"
             style={{ fontSize: "clamp(32px, 5vw, 52px)", letterSpacing: "-2px" }}
           >
-            Diagnostics Hub
+            Controls Diagnostics
           </h1>
           <p className="text-[16px] text-white/60 max-w-[640px] leading-[1.75]">
             Upload your GRC data once. APEX runs all four diagnostic analyses simultaneously —

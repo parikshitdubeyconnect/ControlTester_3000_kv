@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { useCrossNav } from "@/contexts/CrossNavContext";
 import { useLibraryMetrics } from "@/contexts/LibraryMetricsContext";
+import Footer from "@/components/Footer";
 import {
   Upload, X, Play, RotateCcw, Search, Trash2, ShieldCheck,
   LayoutDashboard, List, ChevronDown, ChevronRight, BookOpen,
@@ -305,7 +306,7 @@ function ControlCard({
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap mb-1">
-            <code className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1">{ctrl.control_id}</code>
+            <code className="text-[10px] font-mono font-bold text-[#0C233C] bg-[#F0F2F7] border border-[#E2E6EF] rounded px-1.5 py-0.5">{ctrl.control_id}</code>
             <Badge
               variant="outline"
               className={`text-[10px] ${CONTROL_TYPE_COLOR[ctrl.control_type] ?? ""}`}
@@ -314,14 +315,14 @@ function ControlCard({
             </Badge>
             <Badge
               variant="outline"
-              className="text-[10px]"
-              style={{ borderColor: `hsl(${hue},60%,60%)`, color: `hsl(${hue},60%,40%)` }}
+              className="text-[10px] font-semibold"
+              style={{ borderColor: `hsl(${hue},55%,55%)`, color: `hsl(${hue},65%,28%)`, background: `hsl(${hue},55%,96%)` }}
             >
               {ctrl.domain.replace(/_/g, " ")}
             </Badge>
             <Badge
               variant="outline"
-              className="text-[10px] text-muted-foreground"
+              className="text-[10px] text-[#5A6478] border-[#CBD2DD]"
             >
               {ctrl.specificity_level}
             </Badge>
@@ -332,8 +333,8 @@ function ControlCard({
               </Badge>
             )}
           </div>
-          <p className="text-sm font-semibold leading-tight">{ctrl.control_name}</p>
-          <p className={`text-xs text-muted-foreground mt-1 ${expanded ? "" : "line-clamp-2"}`}>
+          <p className="text-sm font-semibold leading-tight text-[#0C233C]">{ctrl.control_name}</p>
+          <p className={`text-xs text-[#5A6478] mt-1 ${expanded ? "" : "line-clamp-2"}`}>
             {ctrl.description}
           </p>
         </div>
@@ -476,6 +477,7 @@ export default function ControlsLibraryPage() {
   // Resizable panel
   const [panelWidth, setPanelWidth] = useState(320);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
+  const [uploadSectionOpen, setUploadSectionOpen] = useState(true);
   const dragRef = useRef<{ startX: number; startW: number } | null>(null);
 
   const onDividerMouseDown = useCallback((e: React.MouseEvent) => {
@@ -977,19 +979,26 @@ export default function ControlsLibraryPage() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden select-none">
-      <HeroSection title="Controls Library" subtitle="Browse, filter, and analyse enterprise security controls" icon={ShieldCheck} />
       <div className="flex-1 flex overflow-hidden">
 
       {/* ── LEFT PANEL ───────────────────────────────────────────────────────── */}
       <div className="shrink-0 flex flex-col bg-background/50 overflow-hidden transition-[width] duration-200" style={{ width: leftPanelOpen ? panelWidth : 0 }}>
 
-        {/* Upload section */}
+        {/* Upload section (collapsible) */}
         <div className="p-4 border-b space-y-3">
-          <h2 className="text-sm font-semibold flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            Add Policy Documents
-          </h2>
+          <button
+            type="button"
+            onClick={() => setUploadSectionOpen(o => !o)}
+            className="w-full flex items-center justify-between gap-2"
+          >
+            <h2 className="text-sm font-semibold flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              Add Policy Documents
+            </h2>
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${uploadSectionOpen ? "" : "-rotate-90"}`} />
+          </button>
 
+          {uploadSectionOpen && <>
           <div
             className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
               uploadFiles.length > 0
@@ -1073,6 +1082,7 @@ export default function ControlsLibraryPage() {
               ))}
             </div>
           )}
+          </>}
         </div>
 
         {/* Library header */}
@@ -1224,53 +1234,89 @@ export default function ControlsLibraryPage() {
       {/* ── RIGHT PANEL ─────────────────────────────────────────────────────── */}
       <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
 
-        {/* ── PANEL TOGGLE ──────────────────────────────────────────────────── */}
-        <div className="shrink-0 flex items-center px-2 py-1 border-b">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
+        {/* ── PANEL TOGGLE (dark, blends into TraceNavBar/hero) ─────────────── */}
+        <div className="shrink-0 flex items-center px-3 py-1.5" style={{ background: "#0C233C" }}>
+          <button
             onClick={() => setLeftPanelOpen(o => !o)}
             title={leftPanelOpen ? "Collapse panel" : "Expand panel"}
+            className="h-7 w-7 inline-flex items-center justify-center rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           >
             {leftPanelOpen
               ? <PanelLeftClose className="h-4 w-4" />
               : <PanelLeftOpen className="h-4 w-4" />}
-          </Button>
+          </button>
           <div className="ml-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs gap-1.5"
+            <button
               disabled={remapping || controlsDocs.length === 0}
               onClick={handleRemapObligations}
               title="Re-map all controls to regulatory obligations"
+              className="inline-flex items-center gap-1.5 h-7 px-3 text-[12px] font-semibold rounded-md border border-white/20 text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {remapping
                 ? <><div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" /> Remapping…</>
                 : <><Link2 className="h-3.5 w-3.5" /> Map Obligations</>}
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* ── DASHBOARD ──────────────────────────────────────────────────────── */}
         {rightPanelView === "dashboard" && (
-          <ScrollArea className="flex-1">
-            <div className="p-5 space-y-5">
+          <ScrollArea className="flex-1 bg-[#F0F2F7]">
+            {/* Diagnostics-style hero (scrolls with content) */}
+            <section className="relative overflow-hidden" style={{ background: "#0C233C", padding: "44px 0 48px" }}>
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 460,
+                  height: 460,
+                  background: "radial-gradient(circle, rgba(114,19,234,0.3) 0%, transparent 70%)",
+                  filter: "blur(80px)",
+                  top: -160,
+                  right: -80,
+                }}
+              />
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 320,
+                  height: 320,
+                  background: "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)",
+                  filter: "blur(80px)",
+                  bottom: -120,
+                  left: "5%",
+                }}
+              />
+              <div className="relative max-w-[1400px] mx-auto px-8 md:px-12">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-4 h-0.5 rounded bg-[#00338D]" />
+                  <span className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase">Controls Library</span>
+                </div>
+                <h1
+                  className="font-bold text-white leading-tight mb-3"
+                  style={{ fontSize: "clamp(28px, 4vw, 44px)", letterSpacing: "-1.5px" }}
+                >
+                  Controls Library
+                </h1>
+                <p className="text-[14px] text-white/60 max-w-[720px] leading-[1.7]">
+                  Upload your GRC data once. TRACE runs key diagnostic analyses simultaneously — Quality, Duplicates, and Obligations Match — from a single dataset.
+                </p>
+              </div>
+            </section>
+            <div className="p-7 space-y-6">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
-                  <h2 className="text-base font-semibold">Controls Library Dashboard</h2>
+                <div>
+                  <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Controls Library</div>
+                  <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight">Library Dashboard</h2>
                 </div>
                 {controlsDocs.length > 0 && (
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     {(["overview", "quality"] as const).map(tab => (
                       <button
                         key={tab}
-                        className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+                        className={`text-[12px] font-semibold px-3.5 py-1.5 rounded-full border-[1.5px] transition-all ${
                           dashboardTab === tab
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-muted-foreground/30 text-muted-foreground hover:text-foreground"
+                            ? "bg-[#00338D] text-white border-[#00338D]"
+                            : "bg-white text-[#8492A6] border-[#E2E6EF] hover:border-[#00338D] hover:text-[#00338D]"
                         }`}
                         onClick={() => setDashboardTab(tab)}
                       >
@@ -1283,62 +1329,80 @@ export default function ControlsLibraryPage() {
 
               {controlsDocs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <ShieldCheck className="h-12 w-12 text-muted-foreground/30 mb-3" />
-                  <p className="text-sm font-medium text-muted-foreground">No policy documents ingested yet</p>
-                  <p className="text-xs text-muted-foreground mt-1">Upload a company policy document to extract controls</p>
+                  <ShieldCheck className="h-12 w-12 text-[#8492A6]/40 mb-3" />
+                  <p className="text-[14px] font-semibold text-[#5A6478]">No policy documents ingested yet</p>
+                  <p className="text-[12px] text-[#8492A6] mt-1">Upload a company policy document to extract controls</p>
                 </div>
               ) : (
                 <>
                   {/* ── OVERVIEW TAB ─────────────────────────────────────── */}
-                  {dashboardTab === "overview" && <>
+                  {dashboardTab === "overview" && (
+                  <div className="space-y-6">
+
+                  {/* Section header */}
+                  <div>
+                    <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Library Snapshot</div>
+                    <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">Key Metrics</h2>
+                  </div>
 
                   {/* KPI Cards */}
-                  <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                    {[
-                      { label: "Documents", value: controlsDocs.length, sub: "policy files" },
-                      { label: "Total Controls", value: totalRawControls, sub: "extracted" },
-                      { label: "Domains Covered", value: sortedDomains.length, sub: "security domains" },
-                    ].map((kpi, i) => (
-                      <div key={i} className="rounded-xl border bg-card p-4 space-y-1">
-                        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{kpi.label}</p>
-                        <p className="text-2xl font-bold">{kpi.value}</p>
-                        <p className="text-[11px] text-muted-foreground">{kpi.sub}</p>
+                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                    {([
+                      { label: "Documents",       value: controlsDocs.length,    sub: "policy files",      accent: "#1E49E2" },
+                      { label: "Total Controls",  value: totalRawControls,        sub: "extracted",         accent: "#7213EA" },
+                      { label: "Domains Covered", value: sortedDomains.length,    sub: "security domains",  accent: "#098E7E" },
+                    ] as { label: string; value: number; sub: string; accent: string }[]).map((kpi, i) => (
+                      <div
+                        key={i}
+                        className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                      >
+                        <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: kpi.accent }} />
+                        <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">{kpi.label}</p>
+                        <div>
+                          <p className="font-bold text-[38px] text-[#0C233C] leading-none tracking-tight">{kpi.value}</p>
+                          <p className="text-[13px] text-[#8492A6] mt-1">{kpi.sub}</p>
+                        </div>
                       </div>
                     ))}
                     <div
-                      className="rounded-xl border bg-card p-4 space-y-1 cursor-pointer hover:border-primary/50 transition-colors"
+                      className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
                       onClick={controlsDocs.length > 0 ? fetchMerged : undefined}
                     >
-                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Merged View</p>
-                      <p className="text-2xl font-bold flex items-center gap-1">
-                        {mergedLoading
-                          ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
-                          : mergedControls !== null
-                            ? mergedControls.length
-                            : "—"
-                        }
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">
-                        {mergedControls !== null ? "after deduplication" : "click to compute"}
-                      </p>
+                      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: "#EAAA00" }} />
+                      <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Merged View</p>
+                      <div>
+                        <p className="font-bold text-[38px] text-[#0C233C] leading-none tracking-tight flex items-center gap-1">
+                          {mergedLoading
+                            ? <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#7213EA]" />
+                            : mergedControls !== null
+                              ? mergedControls.length
+                              : "—"
+                          }
+                        </p>
+                        <p className="text-[13px] text-[#8492A6] mt-1">
+                          {mergedControls !== null ? "after deduplication" : "click to compute"}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
                   {/* Domain Distribution — clickable filter bars */}
-                  <div className="rounded-xl border bg-card p-4 space-y-3">
+                  <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 space-y-3 transition-all duration-200 hover:shadow-md">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold">Domain Distribution</h3>
+                      <div>
+                        <h3 className="font-bold text-[#0C233C] text-[17px]">Domain Distribution</h3>
+                        <p className="text-[13px] text-[#8492A6] mt-0.5">Click a bar to filter controls below</p>
+                      </div>
                       {dashboardDomainFilter !== "all" && (
                         <button
-                          className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+                          className="text-[11px] font-semibold text-[#5A6478] hover:text-[#0C233C] underline underline-offset-2 transition-colors"
                           onClick={() => setDashboardDomainFilter("all")}
                         >
                           Clear filter
                         </button>
                       )}
                     </div>
-                    <p className="text-[11px] text-muted-foreground -mt-1">Click a bar to filter controls below</p>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 pt-1">
                       {sortedDomains.map(([domain, cnt], i) => {
                         const hue = HUES[i % HUES.length];
                         const pct = Math.round((cnt / maxDomainCount) * 100);
@@ -1346,18 +1410,18 @@ export default function ControlsLibraryPage() {
                         return (
                           <div
                             key={domain}
-                            className={`flex items-center gap-3 rounded-lg px-2 py-1 cursor-pointer transition-colors ${
-                              isActive ? "bg-primary/8 ring-1 ring-primary/30" : "hover:bg-muted/50"
+                            className={`flex items-center gap-3 rounded-lg px-2 py-1.5 cursor-pointer transition-colors ${
+                              isActive ? "bg-[#F0F2F7] ring-1 ring-[#1E49E2]/30" : "hover:bg-[#F7F9FC]"
                             }`}
                             onClick={() => setDashboardDomainFilter(isActive ? "all" : domain)}
                           >
                             <span
-                              className="text-xs font-medium w-36 shrink-0 capitalize leading-tight"
+                              className="text-xs font-semibold w-36 shrink-0 capitalize leading-tight"
                               style={{ color: `hsl(${hue},60%,${isActive ? 35 : 40}%)` }}
                             >
                               {domain.replace(/_/g, " ")}
                             </span>
-                            <div className="flex-1 h-3.5 bg-muted rounded-full overflow-hidden">
+                            <div className="flex-1 h-3.5 bg-[#E2E6EF] rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full transition-all duration-500"
                                 style={{
@@ -1367,7 +1431,7 @@ export default function ControlsLibraryPage() {
                                 }}
                               />
                             </div>
-                            <span className="text-xs text-muted-foreground w-8 text-right shrink-0 font-medium">{cnt}</span>
+                            <span className="text-xs text-[#5A6478] w-8 text-right shrink-0 font-semibold">{cnt}</span>
                           </div>
                         );
                       })}
@@ -1375,17 +1439,19 @@ export default function ControlsLibraryPage() {
                   </div>
 
                   {/* All Controls list */}
-                  <div className="rounded-xl border bg-card overflow-hidden">
-                    <div className="p-3 border-b bg-muted/30 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-semibold">
-                          All Controls
-                          {dashboardDomainFilter !== "all" && (
-                            <span className="ml-2 text-[11px] font-normal text-muted-foreground capitalize">
-                              — {dashboardDomainFilter.replace(/_/g, " ")}
-                            </span>
-                          )}
-                        </h3>
+                  <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm overflow-hidden">
+                    <div className="p-5 border-b border-[#E2E6EF] bg-[#F7F9FC] space-y-3">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                          <h3 className="font-bold text-[#0C233C] text-[17px]">
+                            All Controls
+                            {dashboardDomainFilter !== "all" && (
+                              <span className="ml-2 text-[12px] font-medium text-[#8492A6] capitalize">
+                                — {dashboardDomainFilter.replace(/_/g, " ")}
+                              </span>
+                            )}
+                          </h3>
+                        </div>
                         <Badge variant="secondary" className="text-[10px]">
                           {(() => {
                             const filtered = dashboardControls.filter(c =>
@@ -1400,9 +1466,9 @@ export default function ControlsLibraryPage() {
                         </Badge>
                       </div>
                       <div className="relative">
-                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#8492A6]" />
                         <Input
-                          className="pl-8 h-7 text-xs"
+                          className="pl-8 h-8 text-xs bg-white"
                           placeholder="Search controls…"
                           value={dashboardSearch}
                           onChange={e => setDashboardSearch(e.target.value)}
@@ -1411,10 +1477,10 @@ export default function ControlsLibraryPage() {
                     </div>
                     {dashboardLoading ? (
                       <div className="flex justify-center py-8">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#7213EA]" />
                       </div>
                     ) : (
-                      <div className="space-y-2 p-2">
+                      <div className="space-y-2 p-3">
                         {dashboardControls
                           .filter(c =>
                             (dashboardDomainFilter === "all" || c.domain === dashboardDomainFilter) &&
@@ -1434,7 +1500,7 @@ export default function ControlsLibraryPage() {
                             c.control_name.toLowerCase().includes(dashboardSearch.toLowerCase()) ||
                             c.description.toLowerCase().includes(dashboardSearch.toLowerCase()))
                         ).length === 0 && !dashboardLoading && (
-                          <p className="text-xs text-muted-foreground text-center py-6">
+                          <p className="text-[13px] text-[#8492A6] text-center py-6">
                             {dashboardControls.length === 0 ? "No controls extracted yet." : "No controls match the current filter."}
                           </p>
                         )}
@@ -1442,95 +1508,150 @@ export default function ControlsLibraryPage() {
                     )}
                   </div>
 
-                  </>} {/* end overview tab */}
+                  </div>
+                  )} {/* end overview tab */}
 
                   {/* ── QUALITY ANALYSIS TAB ─────────────────────────────── */}
                   {dashboardTab === "quality" && (
                     ctrlsW1H.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <Activity className="h-12 w-12 text-muted-foreground/30 mb-3" />
-                        <p className="text-sm font-medium text-muted-foreground">No controls to analyze yet</p>
-                        <p className="text-xs text-muted-foreground mt-1">Extract controls from a policy document first</p>
+                        <Activity className="h-12 w-12 text-[#8492A6]/40 mb-3" />
+                        <p className="text-[14px] font-semibold text-[#5A6478]">No controls to analyze yet</p>
+                        <p className="text-[12px] text-[#8492A6] mt-1">Extract controls from a policy document first</p>
                       </div>
                     ) : (
-                      <div className="space-y-5">
+                      <div className="space-y-7">
+
+                        {/* Section header */}
+                        <div>
+                          <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Quality Snapshot</div>
+                          <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">5W1H Quality Overview</h2>
+                        </div>
 
                         {/* KPI Row */}
-                        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Total Controls Assessed</p>
-                            <p className="text-2xl font-bold font-mono">{ctrlsW1H.length}</p>
-                            <p className="text-[11px] text-muted-foreground">across {sortedDomains.length} process areas</p>
+                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: "#1E49E2" }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Total Controls Assessed</p>
+                            <div>
+                              <p className="font-bold text-[38px] text-[#0C233C] leading-none tracking-tight">{ctrlsW1H.length}</p>
+                              <p className="text-[13px] text-[#8492A6] mt-1">across {sortedDomains.length} process areas</p>
+                            </div>
                           </div>
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Avg Quality Score</p>
-                            <p className="text-2xl font-bold font-mono" style={{ color: avgScore >= 5 ? RAG_COLOR.green : avgScore >= 4 ? RAG_COLOR.amber : RAG_COLOR.red }}>
-                              {avgScore.toFixed(2)}/6
-                            </p>
-                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: avgScore >= 5 ? RAG_COLOR.green : avgScore >= 4 ? RAG_COLOR.amber : RAG_COLOR.red }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Avg Quality Score</p>
+                            <div>
+                              <p className="font-bold text-[38px] leading-none tracking-tight" style={{ color: avgScore >= 5 ? RAG_COLOR.green : avgScore >= 4 ? RAG_COLOR.amber : RAG_COLOR.red }}>
+                                {avgScore.toFixed(2)}<span className="text-[18px] tracking-normal text-[#8492A6]">/6</span>
+                              </p>
+                              <p className="text-[13px] text-[#8492A6] mt-1">mean 5W1H elements present</p>
+                            </div>
+                            <div className="w-full h-1.5 bg-[#E2E6EF] rounded-full overflow-hidden">
                               <div className="h-full rounded-full" style={{ width: `${(avgScore/6)*100}%`, background: avgScore >= 5 ? RAG_COLOR.green : avgScore >= 4 ? RAG_COLOR.amber : RAG_COLOR.red }} />
                             </div>
-                            <p className="text-[11px] text-muted-foreground">mean 5W1H elements present</p>
                           </div>
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Requires Improvement</p>
-                            <p className="text-2xl font-bold font-mono" style={{ color: RAG_COLOR.red }}>{requiresImprovementPct.toFixed(1)}%</p>
-                            <p className="text-[11px] text-muted-foreground">{requiresImprovementCount} controls (amber + red)</p>
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: RAG_COLOR.red }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Requires Improvement</p>
+                            <div>
+                              <p className="font-bold text-[38px] leading-none tracking-tight" style={{ color: RAG_COLOR.red }}>{requiresImprovementPct.toFixed(1)}%</p>
+                              <p className="text-[13px] text-[#8492A6] mt-1">{requiresImprovementCount} controls (amber + red)</p>
+                            </div>
                           </div>
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Green — No Action</p>
-                            <p className="text-2xl font-bold font-mono" style={{ color: RAG_COLOR.green }}>{ragCounts.green}</p>
-                            <p className="text-[11px] text-muted-foreground">
-                              {ctrlsW1H.length > 0 ? `${(ragCounts.green/ctrlsW1H.length*100).toFixed(1)}% of corpus` : "—"}
-                            </p>
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: RAG_COLOR.green }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Green — No Action</p>
+                            <div>
+                              <p className="font-bold text-[38px] leading-none tracking-tight" style={{ color: RAG_COLOR.green }}>{ragCounts.green}</p>
+                              <p className="text-[13px] text-[#8492A6] mt-1">
+                                {ctrlsW1H.length > 0 ? `${(ragCounts.green/ctrlsW1H.length*100).toFixed(1)}% of corpus` : "—"}
+                              </p>
+                            </div>
                           </div>
+                        </div>
+
+                        {/* Obligation Mapping section header */}
+                        <div>
+                          <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Obligation Mapping</div>
+                          <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">Coverage & Match Quality</h2>
                         </div>
 
                         {/* Obligation Mapping KPI Row */}
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150"
-                               style={{ borderLeft: "3px solid #009A44" }}>
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Controls–Obligations Coverage</p>
-                            <p className="text-2xl font-bold font-mono" style={{ color: "#009A44" }}>{oblCoveragePct.toFixed(1)}%</p>
-                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: "#009A44" }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Controls–Obligations Coverage</p>
+                            <div>
+                              <p className="font-bold text-[38px] leading-none tracking-tight" style={{ color: "#009A44" }}>{oblCoveragePct.toFixed(1)}%</p>
+                              <p className="text-[13px] text-[#8492A6] mt-1">{oblMappedCount} of {dashboardControls.length} controls mapped</p>
+                            </div>
+                            <div className="w-full h-1.5 bg-[#E2E6EF] rounded-full overflow-hidden">
                               <div className="h-full rounded-full" style={{ width: `${oblCoveragePct}%`, background: "#009A44" }} />
                             </div>
-                            <p className="text-[11px] text-muted-foreground">{oblMappedCount} of {dashboardControls.length} controls mapped</p>
                           </div>
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150"
-                               style={{ borderLeft: "3px solid #7213EA" }}>
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Avg Obligation Match Score</p>
-                            <p className="text-2xl font-bold font-mono" style={{ color: "#7213EA" }}>{avgOblMatchScore.toFixed(3)}/1.0</p>
-                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: "#7213EA" }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Avg Obligation Match Score</p>
+                            <div>
+                              <p className="font-bold text-[38px] leading-none tracking-tight" style={{ color: "#7213EA" }}>
+                                {avgOblMatchScore.toFixed(3)}<span className="text-[18px] tracking-normal text-[#8492A6]">/1.0</span>
+                              </p>
+                              <p className="text-[13px] text-[#8492A6] mt-1">across {allOblScores.length} obligation links</p>
+                            </div>
+                            <div className="w-full h-1.5 bg-[#E2E6EF] rounded-full overflow-hidden">
                               <div className="h-full rounded-full" style={{ width: `${avgOblMatchScore * 100}%`, background: "#7213EA" }} />
                             </div>
-                            <p className="text-[11px] text-muted-foreground">across {allOblScores.length} obligation links</p>
                           </div>
-                          <div className="rounded-xl border bg-card p-4 space-y-1 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150"
-                               style={{ borderLeft: "3px solid #EAAA00" }}>
-                            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Potential Duplicates</p>
-                            {mergedStatsLoading ? (
-                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mt-1" />
-                            ) : (
-                              <p className="text-2xl font-bold font-mono" style={{ color: "#EAAA00" }}>
-                                {qualityDuplicates !== null ? qualityDuplicates : "—"}
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: "#EAAA00" }} />
+                            <p className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">Potential Duplicates</p>
+                            <div>
+                              {mergedStatsLoading ? (
+                                <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#EAAA00]" />
+                              ) : (
+                                <p className="font-bold text-[38px] leading-none tracking-tight" style={{ color: "#EAAA00" }}>
+                                  {qualityDuplicates !== null ? qualityDuplicates : "—"}
+                                </p>
+                              )}
+                              <p className="text-[13px] text-[#8492A6] mt-1">
+                                {mergedCtrlStats
+                                  ? `${mergedCtrlStats.total_raw} raw → ${mergedCtrlStats.total_merged} merged`
+                                  : mergedStatsLoading ? "computing…" : "loading…"}
                               </p>
-                            )}
-                            <p className="text-[11px] text-muted-foreground">
-                              {mergedCtrlStats
-                                ? `${mergedCtrlStats.total_raw} raw → ${mergedCtrlStats.total_merged} merged`
-                                : mergedStatsLoading ? "computing…" : "loading…"}
-                            </p>
+                            </div>
                           </div>
                         </div>
 
+                        {/* Charts section header */}
+                        <div>
+                          <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Distribution</div>
+                          <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">Quality Charts</h2>
+                        </div>
+
                         {/* Charts Row */}
-                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+
+                          {/* 5W1H Prevalence Bar */}
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="font-bold text-[#0C233C] text-[17px] mb-1">5W1H Element Prevalence</div>
+                            <p className="text-[13px] text-[#8492A6] mb-4">Controls with each element present</p>
+                            <ResponsiveContainer width="100%" height={220}>
+                              <BarChart data={w1hPrevalenceData} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
+                                <XAxis type="number" domain={[0, ctrlsW1H.length]} tick={{ fontSize: 11, fill: "#8492A6" }} tickLine={false} axisLine={false} />
+                                <YAxis type="category" dataKey="element" tick={{ fontSize: 12, fontWeight: 700, fill: "#2D3748" }} tickLine={false} axisLine={false} width={45} />
+                                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_ITEM_STYLE} labelStyle={CHART_TOOLTIP_LABEL_STYLE} formatter={(v: number) => [v, "Controls"]} />
+                                <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={26}>
+                                  {w1hPrevalenceData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                                </Bar>
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
 
                           {/* RAG Donut */}
-                          <div className="rounded-xl border bg-card p-4 space-y-2 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <h3 className="text-sm font-semibold">RAG Distribution</h3>
-                            <p className="text-[11px] text-muted-foreground">Quality rating across all {ctrlsW1H.length} controls</p>
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="font-bold text-[#0C233C] text-[17px] mb-1">RAG Distribution</div>
+                            <p className="text-[13px] text-[#8492A6] mb-4">Quality rating across all {ctrlsW1H.length} controls</p>
                             <div className="relative">
                               <ResponsiveContainer width="100%" height={200}>
                                 <PieChart>
@@ -1541,152 +1662,155 @@ export default function ControlsLibraryPage() {
                                 </PieChart>
                               </ResponsiveContainer>
                               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span className="text-xl font-bold font-mono">{ctrlsW1H.length}</span>
-                                <span className="text-[9px] text-muted-foreground uppercase tracking-wider">controls</span>
+                                <span className="font-bold text-[22px] text-[#0C233C] tracking-tight leading-none">{ctrlsW1H.length}</span>
+                                <span className="text-[10px] text-[#8492A6] font-semibold uppercase tracking-wider mt-0.5">controls</span>
                               </div>
                             </div>
-                            <div className="space-y-1">
+                            <div className="flex flex-col gap-2 mt-3">
                               {ragDonutData.map(d => (
-                                <div key={d.name} className="flex items-center gap-2 text-[11px]">
-                                  <span className="h-2 w-2 rounded-full shrink-0" style={{ background: d.color }} />
-                                  <span className="text-muted-foreground flex-1">{d.name}</span>
-                                  <span className="font-mono font-medium">{d.value}</span>
+                                <div key={d.name} className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: d.color }} />
+                                    <span className="text-[12px] text-[#5A6478]">{d.name}</span>
+                                  </div>
+                                  <span className="text-[12px] font-bold text-[#0C233C]">{d.value}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
 
-                          {/* 5W1H Prevalence Bar */}
-                          <div className="rounded-xl border bg-card p-4 space-y-2 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <h3 className="text-sm font-semibold">5W1H Element Prevalence</h3>
-                            <p className="text-[11px] text-muted-foreground">Controls with each element present</p>
-                            <ResponsiveContainer width="100%" height={200}>
-                              <BarChart data={w1hPrevalenceData} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
-                                <XAxis type="number" domain={[0, ctrlsW1H.length]} tick={{ fontSize: 9, fontFamily: "var(--font-mono)" }} tickLine={false} axisLine={false} />
-                                <YAxis type="category" dataKey="element" tick={{ fontSize: 10, fontFamily: "var(--font-mono)", fontWeight: 600 }} tickLine={false} axisLine={false} width={36} />
-                                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_ITEM_STYLE} labelStyle={CHART_TOOLTIP_LABEL_STYLE} formatter={(v: number) => [v, "Controls"]} />
-                                <Bar dataKey="count" radius={[0, 3, 3, 0]}>
-                                  {w1hPrevalenceData.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                                </Bar>
-                              </BarChart>
-                            </ResponsiveContainer>
-                          </div>
-
                           {/* RAG by Process Area */}
-                          <div className="rounded-xl border bg-card p-4 space-y-2 hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm transition-all duration-150">
-                            <h3 className="text-sm font-semibold">Quality RAG by Process Area</h3>
-                            <p className="text-[11px] text-muted-foreground">Green / Amber / Red breakdown per area</p>
-                            <ResponsiveContainer width="100%" height={200}>
+                          <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="font-bold text-[#0C233C] text-[17px] mb-1">Quality RAG by Process Area</div>
+                            <p className="text-[13px] text-[#8492A6] mb-4">Green / Amber / Red breakdown per area</p>
+                            <ResponsiveContainer width="100%" height={220}>
                               <BarChart data={domainRagData} layout="vertical" margin={{ left: 4, right: 8, top: 4, bottom: 4 }}>
-                                <XAxis type="number" tick={{ fontSize: 9, fontFamily: "var(--font-mono)" }} tickLine={false} axisLine={false} />
-                                <YAxis type="category" dataKey="domain" tick={{ fontSize: 9, fontFamily: "var(--font-mono)" }} tickLine={false} axisLine={false} width={80} />
+                                <XAxis type="number" tick={{ fontSize: 11, fill: "#8492A6" }} tickLine={false} axisLine={false} />
+                                <YAxis type="category" dataKey="domain" tick={{ fontSize: 10, fill: "#2D3748" }} tickLine={false} axisLine={false} width={80} />
                                 <Tooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_ITEM_STYLE} labelStyle={CHART_TOOLTIP_LABEL_STYLE} />
-                                <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 10 }} />
+                                <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 11 }} />
                                 <Bar dataKey="green" name="Green" stackId="rag" fill={RAG_COLOR.green} />
                                 <Bar dataKey="amber" name="Amber" stackId="rag" fill={RAG_COLOR.amber} />
-                                <Bar dataKey="red" name="Red" stackId="rag" fill={RAG_COLOR.red} radius={[0, 2, 2, 0]} />
+                                <Bar dataKey="red" name="Red" stackId="rag" fill={RAG_COLOR.red} radius={[0, 4, 4, 0]} />
                               </BarChart>
                             </ResponsiveContainer>
                           </div>
                         </div>
 
+                        {/* 5W1H Scores Detail section header */}
+                        <div>
+                          <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Control Detail</div>
+                          <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">5W1H Scores by Control</h2>
+                        </div>
+
                         {/* 5W1H Scores Detail Table */}
-                        <div className="rounded-xl border bg-card overflow-hidden">
-                          <div className="p-3 border-b bg-muted/30 space-y-2">
-                            <div className="flex items-center justify-between flex-wrap gap-2">
-                              <h3 className="text-sm font-semibold">
-                                5W1H Scores by Control
-                              </h3>
-                              <button
-                                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border rounded-lg px-2 py-1 transition-colors"
-                                onClick={() => exportQualityCSV(filteredQuality)}
-                              >
-                                <Download className="h-3 w-3" />
-                                Export CSV
-                              </button>
-                            </div>
-                            <div className="flex items-center gap-1 flex-wrap">
+                        <div className="rounded-2xl border border-[#E2E6EF] bg-white shadow-sm overflow-hidden">
+                          <div className="p-5 border-b border-[#E2E6EF] bg-[#F7F9FC] space-y-3">
+                            <div className="flex items-center gap-2 flex-wrap">
                               {(["all", "red", "amber", "green"] as const).map(f => (
                                 <button
                                   key={f}
-                                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors capitalize ${
+                                  className={`text-[12px] font-semibold px-3.5 py-1.5 rounded-full border-[1.5px] transition-all capitalize ${
                                     qualityRagFilter === f
                                       ? f === "all"
-                                        ? "bg-primary text-primary-foreground border-primary"
-                                        : `border-transparent text-white`
-                                      : "border-muted-foreground/30 text-muted-foreground hover:text-foreground"
+                                        ? "bg-[#00338D] text-white border-[#00338D]"
+                                        : "border-transparent text-white"
+                                      : "bg-white text-[#8492A6] border-[#E2E6EF] hover:border-[#00338D] hover:text-[#00338D]"
                                   }`}
-                                  style={qualityRagFilter === f && f !== "all" ? { background: RAG_COLOR[f] } : {}}
+                                  style={qualityRagFilter === f && f !== "all" ? { background: RAG_COLOR[f], borderColor: RAG_COLOR[f] } : {}}
                                   onClick={() => setQualityRagFilter(f)}
                                 >
                                   {f === "all" ? `All (${ctrlsW1H.length})` : `${f.charAt(0).toUpperCase() + f.slice(1)} (${ragCounts[f]})`}
                                 </button>
                               ))}
                               <div className="relative ml-auto">
-                                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#8492A6]" />
                                 <input
-                                  className="pl-6 h-6 text-[11px] border rounded-lg bg-transparent pr-2 focus:outline-none focus:ring-1 focus:ring-primary/50 w-36"
+                                  className="pl-8 h-8 text-[12px] border border-[#E2E6EF] rounded-lg bg-white pr-2 focus:outline-none focus:ring-1 focus:ring-[#00338D]/40 w-44"
                                   placeholder="Search…"
                                   value={qualitySearch}
                                   onChange={e => setQualitySearch(e.target.value)}
                                 />
                               </div>
+                              <button
+                                className="inline-flex items-center gap-2 text-[12px] font-semibold text-white bg-[#00338D] rounded-lg px-3.5 py-1.5 hover:bg-[#1E49E2] transition-colors"
+                                onClick={() => exportQualityCSV(filteredQuality)}
+                              >
+                                <Download className="h-3 w-3" />
+                                Export CSV
+                              </button>
                             </div>
                           </div>
                           <div className="overflow-x-auto">
                             <table className="w-full text-[11px]">
                               <thead>
-                                <tr className="border-b bg-muted/20">
-                                  <th className="text-left px-3 py-2 font-medium text-muted-foreground w-24">Control ID</th>
-                                  <th className="text-left px-3 py-2 font-medium text-muted-foreground">Control Title</th>
-                                  <th className="text-left px-3 py-2 font-medium text-muted-foreground">Control Text</th>
-                                  <th className="text-left px-3 py-2 font-medium text-muted-foreground w-28">Process Area</th>
+                                <tr className="bg-[#F7F9FC] border-b border-[#E2E6EF]">
+                                  <th className="text-left px-3 py-3 text-[11px] font-bold text-[#8492A6] uppercase tracking-[1px] w-24">Control ID</th>
+                                  <th className="text-left px-3 py-3 text-[11px] font-bold text-[#8492A6] uppercase tracking-[1px]">Control Title</th>
+                                  <th className="text-left px-3 py-3 text-[11px] font-bold text-[#8492A6] uppercase tracking-[1px]">Control Text</th>
+                                  <th className="text-left px-3 py-3 text-[11px] font-bold text-[#8492A6] uppercase tracking-[1px] w-28">Process Area</th>
                                   {W1H_KEYS.map(k => (
-                                    <th key={k} className="text-center px-1 py-2 font-medium w-10" style={{ color: W1H_COLORS[k] }}>
+                                    <th key={k} className="text-center px-1 py-3 text-[11px] font-bold uppercase tracking-[1px] w-10" style={{ color: W1H_COLORS[k] }}>
                                       {k.toUpperCase()}
                                     </th>
                                   ))}
-                                  <th className="text-center px-2 py-2 font-medium text-muted-foreground w-12">Score</th>
-                                  <th className="text-center px-2 py-2 font-medium text-muted-foreground w-14">RAG</th>
+                                  <th className="text-center px-2 py-3 text-[11px] font-bold text-[#8492A6] uppercase tracking-[1px] w-12">Score</th>
+                                  <th className="text-center px-2 py-3 text-[11px] font-bold text-[#8492A6] uppercase tracking-[1px] w-14">RAG</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {filteredQuality.slice(0, 200).map((c, i) => (
-                                  <tr key={c.control_id ?? i} title={c.description || c.control_name} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                                {filteredQuality.slice(0, 200).map((c, i) => {
+                                  const obligationsText = (c.mapped_obligations && c.mapped_obligations.length > 0)
+                                    ? c.mapped_obligations
+                                        .map((o: any) => o.obligation_id || o.id || o.title || o.name || "")
+                                        .filter(Boolean)
+                                        .join(", ")
+                                    : "—";
+                                  const processArea = (c.domain || "").replace(/_/g, " ") || "—";
+                                  const tooltip =
+`${c.control_name || c.control_id}
+
+${c.description || ""}
+
+Process Area: ${processArea}
+Obligations: ${obligationsText}`;
+                                  return (
+                                  <tr key={c.control_id ?? i} title={tooltip} className="border-b border-[#E2E6EF] last:border-0 hover:bg-[#FAFBFD] transition-colors">
                                     <td
-                                      className="px-3 py-2 font-mono text-[10px] text-primary cursor-pointer hover:underline"
+                                      className="px-3 py-2.5 font-mono text-[11px] text-[#00338D] hover:text-[#1E49E2] cursor-pointer hover:underline font-bold"
                                       onClick={() => setSelectedQualityControl(c)}
                                     >{c.control_id}</td>
-                                    <td className="px-3 py-2 text-foreground leading-tight max-w-xs">
+                                    <td className="px-3 py-2.5 text-[12px] text-[#0C233C] leading-tight max-w-xs">
                                       <span className="line-clamp-2">{c.control_name}</span>
                                     </td>
-                                    <td className="px-3 py-2 text-muted-foreground leading-tight max-w-md">
+                                    <td className="px-3 py-2.5 text-[12px] text-[#5A6478] leading-tight max-w-md">
                                       <span className="line-clamp-2">{c.description}</span>
                                     </td>
-                                    <td className="px-3 py-2 text-muted-foreground capitalize">{c.domain?.replace(/_/g, " ")}</td>
+                                    <td className="px-3 py-2.5 text-[12px] text-[#5A6478] capitalize">{c.domain?.replace(/_/g, " ")}</td>
                                     {W1H_KEYS.map(k => (
-                                      <td key={k} className="text-center px-1 py-2">
+                                      <td key={k} className="text-center px-1 py-2.5">
                                         {c.w1h[k]
                                           ? <span style={{ color: W1H_COLORS[k] }}>✓</span>
-                                          : <span className="text-muted-foreground/40">✗</span>
+                                          : <span className="text-[#8492A6]/50">✗</span>
                                         }
                                       </td>
                                     ))}
-                                    <td className="text-center px-2 py-2 font-mono font-medium">{c.score}/6</td>
-                                    <td className="text-center px-2 py-2">
+                                    <td className="text-center px-2 py-2.5 font-mono font-bold text-[#0C233C]">{c.score}/6</td>
+                                    <td className="text-center px-2 py-2.5">
                                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${RAG_BG[c.rag]}`}>
                                         {c.rag.charAt(0).toUpperCase() + c.rag.slice(1)}
                                       </span>
                                     </td>
                                   </tr>
-                                ))}
+                                  );
+                                })}
                                 {filteredQuality.length === 0 && (
-                                  <tr><td colSpan={11} className="text-center py-6 text-muted-foreground">No controls match filter.</td></tr>
+                                  <tr><td colSpan={11} className="text-center py-6 text-[#8492A6]">No controls match filter.</td></tr>
                                 )}
                               </tbody>
                             </table>
                             {filteredQuality.length > 200 && (
-                              <p className="text-[10px] text-muted-foreground text-center py-2 border-t">
+                              <p className="text-[11px] text-[#8492A6] text-center py-3 border-t border-[#E2E6EF]">
                                 Showing 200 of {filteredQuality.length} — use Export CSV for full data
                               </p>
                             )}
@@ -1700,6 +1824,7 @@ export default function ControlsLibraryPage() {
                 </>
               )}
             </div>
+            <Footer />
           </ScrollArea>
         )}
 

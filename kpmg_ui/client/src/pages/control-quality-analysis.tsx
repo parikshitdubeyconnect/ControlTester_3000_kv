@@ -8,7 +8,6 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import TraceNavBar from "@/components/TraceNavBar";
 import Footer from "@/components/Footer";
 import {
   BarChart,
@@ -74,13 +73,15 @@ function KpiCard({
   scoreBar?: number;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-5 relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl" style={{ background: accentColor }} />
-      <div className="text-[11px] font-bold text-[#8492A6] uppercase tracking-[1.5px] mb-2 mt-1">{label}</div>
-      <div className="font-bold text-[38px] text-[#0C233C] tracking-tight leading-none mb-1">{value}</div>
-      <div className="text-[12px] text-[#8492A6] mb-2">{sub}</div>
+    <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-7 relative overflow-hidden flex flex-col gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: accentColor }} />
+      <div className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase mt-1">{label}</div>
+      <div>
+        <div className="font-bold text-[38px] text-[#0C233C] tracking-tight leading-none mb-1">{value}</div>
+        <div className="text-[13px] text-[#8492A6] mt-1">{sub}</div>
+      </div>
       {scoreBar !== undefined && (
-        <div className="h-1.5 bg-[#E2E6EF] rounded-full overflow-hidden mb-2">
+        <div className="h-1.5 bg-[#E2E6EF] rounded-full overflow-hidden">
           <div
             className="h-full rounded-full"
             style={{
@@ -90,9 +91,11 @@ function KpiCard({
           />
         </div>
       )}
-      <span className={`inline-flex items-center text-[11px] font-bold px-2.5 py-1 rounded-full ${badgeClass}`}>
-        {badge}
-      </span>
+      {badge && (
+        <span className={`inline-flex items-center self-start text-[11px] font-bold px-2.5 py-1 rounded-full ${badgeClass}`}>
+          {badge}
+        </span>
+      )}
     </div>
   );
 }
@@ -257,16 +260,34 @@ export default function ControlQualityAnalysisPage() {
   const ex = EXAMPLES[exTab];
 
   return (
-    <div className="min-h-screen bg-[#F0F2F7]">
-      {/* ── Nav ── */}
-      <TraceNavBar breadcrumb="Control Quality Analysis" />
+    <div className="h-full overflow-auto bg-[#F0F2F7]">
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"
-        style={{ background: "#0C233C", padding: "52px 0 48px" }}
+        style={{ background: "#0C233C", padding: "52px 0 56px" }}
       >
-        <div className="absolute rounded-full pointer-events-none" style={{ width:400,height:400,background:"radial-gradient(circle, rgba(114,19,234,0.25) 0%, transparent 70%)",filter:"blur(80px)",top:-120,right:-60 }} />
-        <div className="absolute rounded-full pointer-events-none" style={{ width:280,height:280,background:"radial-gradient(circle, rgba(0,154,68,0.15) 0%, transparent 70%)",filter:"blur(80px)",bottom:-80,left:"5%" }} />
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            width: 460,
+            height: 460,
+            background: "radial-gradient(circle, rgba(114,19,234,0.3) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            top: -140,
+            right: -80,
+          }}
+        />
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            width: 320,
+            height: 320,
+            background: "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            bottom: -100,
+            left: "5%",
+          }}
+        />
         <div className="relative max-w-[1100px] mx-auto px-8 md:px-12">
           <button
             onClick={() => navigate("/controls-diagnostics")}
@@ -276,13 +297,16 @@ export default function ControlQualityAnalysisPage() {
             Back to Diagnostics Hub
           </button>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-4 h-0.5 rounded bg-[#7213EA]" />
-            <span className="text-[11px] font-bold text-[#7213EA] tracking-[2px] uppercase">Controls Design Diagnostics</span>
+            <div className="w-4 h-0.5 rounded bg-[#00338D]" />
+            <span className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase">Controls Design Diagnostics</span>
           </div>
-          <h1 className="font-bold text-white leading-tight mb-3" style={{ fontSize:"clamp(28px,4vw,44px)", letterSpacing:"-1.5px" }}>
+          <h1
+            className="font-bold text-white leading-tight mb-4"
+            style={{ fontSize: "clamp(32px, 5vw, 52px)", letterSpacing: "-2px" }}
+          >
             Control Quality Analysis
           </h1>
-          <p className="text-[16px] text-white/60 max-w-[680px] leading-[1.7] mb-6">
+          <p className="text-[16px] text-white/60 max-w-[640px] leading-[1.75] mb-6">
             Assess control documentation quality using the{" "}
             <strong className="text-white">5W1H framework</strong> — evaluating whether each
             control clearly defines Who performs it, What action is taken, Where it occurs, How
@@ -348,7 +372,11 @@ export default function ControlQualityAnalysisPage() {
             </div>
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-7">
+            <div className="mb-3">
+              <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Key Metrics</div>
+              <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">Quality Overview</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-9 mt-5">
               <KpiCard
                 label="Total Controls Assessed"
                 value={APEX_CSV.length.toLocaleString()}
@@ -385,12 +413,16 @@ export default function ControlQualityAnalysisPage() {
             </div>
 
             {/* Charts */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-7">
+            <div className="mb-3">
+              <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Distribution</div>
+              <h2 className="font-bold text-[#0C233C] text-[20px] tracking-tight pb-4 border-b-2 border-[#E2E6EF]">5W1H Quality Charts</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-9 mt-5">
 
               {/* RAG Donut */}
-              <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-6">
-                <div className="font-bold text-[#0C233C] text-[14px] mb-1">RAG Distribution</div>
-                <div className="text-[12px] text-[#8492A6] mb-4">Quality rating across all {APEX_CSV.length.toLocaleString()} controls</div>
+              <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                <div className="font-bold text-[#0C233C] text-[17px] mb-1">RAG Distribution</div>
+                <div className="text-[13px] text-[#8492A6] mb-4">Quality rating across all {APEX_CSV.length.toLocaleString()} controls</div>
                 <div className="relative h-[180px]">
                   <ResponsiveContainer width="100%" height={180}>
                     <PieChart>
@@ -421,9 +453,9 @@ export default function ControlQualityAnalysisPage() {
               </div>
 
               {/* 5W1H Marker bar */}
-              <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-6">
-                <div className="font-bold text-[#0C233C] text-[14px] mb-1">5W1H Element Prevalence</div>
-                <div className="text-[12px] text-[#8492A6] mb-4">Controls with each element present</div>
+              <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                <div className="font-bold text-[#0C233C] text-[17px] mb-1">5W1H Element Prevalence</div>
+                <div className="text-[13px] text-[#8492A6] mb-4">Controls with each element present</div>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={markerData} layout="vertical" margin={{ left: 10, right: 20 }}>
                     <XAxis type="number" domain={[0, APEX_CSV.length]} tick={{ fontSize: 11, fill: "#8492A6" }} />
@@ -437,9 +469,9 @@ export default function ControlQualityAnalysisPage() {
               </div>
 
               {/* RAG by Process Area */}
-              <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-6">
-                <div className="font-bold text-[#0C233C] text-[14px] mb-1">Quality RAG by Process Area</div>
-                <div className="text-[12px] text-[#8492A6] mb-4">Green / Amber / Red per area</div>
+              <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                <div className="font-bold text-[#0C233C] text-[17px] mb-1">Quality RAG by Process Area</div>
+                <div className="text-[13px] text-[#8492A6] mb-4">Green / Amber / Red per area</div>
                 <ResponsiveContainer width="100%" height={320}>
                   <BarChart data={processData} layout="vertical" margin={{ left: 10, right: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#E2E6EF" horizontal={false} />

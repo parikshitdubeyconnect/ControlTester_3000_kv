@@ -10,7 +10,6 @@ import {
   ChevronUp,
   ChevronDown as ChevronDownIcon,
 } from "lucide-react";
-import TraceNavBar from "@/components/TraceNavBar";
 import Footer from "@/components/Footer";
 import {
   BarChart,
@@ -270,9 +269,7 @@ export default function RiskControlsCoveragePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F7]">
-      {/* ── Nav ── */}
-      <TraceNavBar breadcrumb="Risk–Controls Coverage" />
+    <div className="h-full overflow-auto bg-[#F0F2F7]">
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden"

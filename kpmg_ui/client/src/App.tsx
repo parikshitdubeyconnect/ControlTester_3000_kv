@@ -42,7 +42,7 @@ import { IssueManagementProvider } from "@/contexts/IssueManagementContext";
 // This prevents remount on every tab switch, so useEffect runs only once per
 // session and local state (loading, filters, results) is preserved.
 const PAGES = [
-  { path: "/",                     Page: DashboardPage           },
+  { path: "/dashboard",            Page: DashboardPage           },
   { path: "/regulatory-testing",   Page: RegulatoryTestingPage   },
   { path: "/reports",              Page: ReportsPage             },
   { path: "/risk-assessment",      Page: RiskAssessmentPage      },
@@ -56,6 +56,10 @@ const PAGES = [
   { path: "/issue-management",     Page: IssueManagementPage     },
   { path: "/exception-management", Page: ExceptionManagementPage },
   { path: "/asset-registry",       Page: AssetRegistryPage       },
+  { path: "/controls-diagnostics", Page: ControlsDiagnosticsPage },
+  { path: "/controls-diagnostics/risk-controls-coverage",       Page: RiskControlsCoveragePage       },
+  { path: "/controls-diagnostics/control-quality-analysis",     Page: ControlQualityAnalysisPage     },
+  { path: "/controls-diagnostics/regulation-controls-coverage", Page: RegulationControlsCoveragePage },
 ] as const;
 
 function Router() {
@@ -67,6 +71,9 @@ function Router() {
     if (!user && location !== "/login") {
       setLocation("/login");
     } else if (user && location === "/login") {
+      setLocation("/landing");
+    } else if (user && location === "/") {
+      // Root URL goes to landing, not dashboard
       setLocation("/landing");
     }
   }, [user, location]);
@@ -83,19 +90,6 @@ function Router() {
     return <LandingPage />;
   }
 
-  // Controls Diagnostics — full-page experience (no AppLayout)
-  if (location === "/controls-diagnostics") {
-    return <ControlsDiagnosticsPage />;
-  }
-  if (location === "/controls-diagnostics/risk-controls-coverage") {
-    return <RiskControlsCoveragePage />;
-  }
-  if (location === "/controls-diagnostics/control-quality-analysis") {
-    return <ControlQualityAnalysisPage />;
-  }
-  if (location === "/controls-diagnostics/regulation-controls-coverage") {
-    return <RegulationControlsCoveragePage />;
-  }
   if (location.startsWith("/control-360/") || location === "/control-360") {
     return <Control360Page />;
   }

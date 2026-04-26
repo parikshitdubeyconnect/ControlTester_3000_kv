@@ -19,20 +19,76 @@ import {
 } from "lucide-react";
 
 import ControlTestingKpis from "@/components/ControlTestingKpis";
-import HeroSection from "@/components/HeroSection";
 import HowItWorks from "@/components/HowItWorks";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useControlTesting } from "@/contexts/ControlTestingContext";
+import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { useControlTesting } from "@/contexts/ControlTestingContext";
 import {
   canGenerateWorkpaper,
   CONTROL_TESTING_API,
-  getControlTestingStepNumber,
 } from "@/pages/control-testing.helpers";
 
 const CHECKLIST_PAGE_SIZE = 5;
+
+// ─── Brand-aligned primitives ────────────────────────────────────────────────
+const PANEL =
+  "bg-white rounded-2xl border border-[#E2E6EF] shadow-sm";
+const PANEL_PAD = "p-6";
+
+const PRIMARY_BTN =
+  "inline-flex items-center justify-center gap-2 bg-[#00338D] text-white px-6 py-3 rounded-xl font-bold text-[14px] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#002a73] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0";
+const SECONDARY_BTN =
+  "inline-flex items-center justify-center gap-2 bg-white border border-[#E2E6EF] text-[#0C233C] px-6 py-3 rounded-xl font-bold text-[14px] transition-all duration-200 hover:border-[#0C233C]/40 disabled:opacity-60 disabled:cursor-not-allowed";
+const GHOST_ICON_BTN =
+  "inline-flex items-center justify-center w-9 h-9 rounded-lg border border-[#E2E6EF] bg-white text-[#5A6478] hover:text-[#0C233C] hover:border-[#0C233C]/40 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
+
+function Pill({
+  tone = "neutral",
+  children,
+}: {
+  tone?: "neutral" | "navy" | "success" | "warn" | "danger" | "mono";
+  children: React.ReactNode;
+}) {
+  const tones: Record<string, string> = {
+    neutral: "bg-[#F0F2F7] text-[#5A6478] border-[#E2E6EF]",
+    navy: "bg-[#EEF2FF] text-[#00338D] border-[#D5DEF7]",
+    success: "bg-[#E6F5EC] text-[#067A37] border-[#B7E0C5]",
+    warn: "bg-[#FFF6E0] text-[#8A6500] border-[#F2DA88]",
+    danger: "bg-[#FCE6E9] text-[#B30016] border-[#F2B7BF]",
+    mono: "bg-white text-[#0C233C] border-[#E2E6EF] font-mono",
+  };
+  return (
+    <span
+      className={`inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full border ${tones[tone]}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  right,
+}: {
+  eyebrow: string;
+  title: string;
+  right?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-4 pb-4 border-b-2 border-[#E2E6EF] mb-5">
+      <div>
+        <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">
+          {eyebrow}
+        </div>
+        <div className="font-bold text-[#0C233C] text-[20px] tracking-tight">
+          {title}
+        </div>
+      </div>
+      {right}
+    </div>
+  );
+}
 
 export default function ControlTestingPage() {
   const { toast } = useToast();
@@ -317,530 +373,656 @@ export default function ControlTestingPage() {
     toast({ title: "Ready", description: "You can start a new control test." });
   };
 
-  const stepNumber = getControlTestingStepNumber(currentStep);
+  // The duplicate stepper-pill row was removed; current step is now reflected
+  // by which section is rendered, not by a numbered indicator.
   const showGenerateAction = canGenerateWorkpaper(readyToGenerate, evidenceSummary);
 
+  const overallResult = workpaperSummary?.overall_result ?? "";
+  const resultTone =
+    overallResult === "COMPLIANT"
+      ? "success"
+      : overallResult === "NON_COMPLIANT"
+        ? "danger"
+        : "warn";
+
   return (
-    <div className="h-full flex flex-col">
-      <HeroSection
-        title="Control Testing"
-        subtitle="Upload a test script, validate evidence against required controls, and generate an audit workpaper"
-        icon={Shield}
-      />
-      <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+    <div className="h-full flex flex-col bg-[#F0F2F7]">
+      {/* ── Main (scrollable). TraceNavBar comes from AppLayout. ── */}
+      <main className="flex-1 overflow-auto">
+        {/* ── Hero ── */}
+        <section
+          className="relative overflow-hidden"
+          style={{ background: "#0C233C", padding: "52px 0 56px" }}
+        >
+          {/* Orbs */}
+          <div
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: 460,
+              height: 460,
+              background:
+                "radial-gradient(circle, rgba(114,19,234,0.3) 0%, transparent 70%)",
+              filter: "blur(80px)",
+              top: -140,
+              right: -80,
+            }}
+          />
+          <div
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: 320,
+              height: 320,
+              background:
+                "radial-gradient(circle, rgba(0,184,245,0.18) 0%, transparent 70%)",
+              filter: "blur(80px)",
+              bottom: -100,
+              left: "5%",
+            }}
+          />
+          <div className="relative max-w-[1100px] mx-auto px-8 md:px-12">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-4 h-0.5 rounded bg-[#00338D]" />
+              <span className="text-[11px] font-bold text-[#00338D] tracking-[2px] uppercase">
+                Audit Automation
+              </span>
+            </div>
+            <h1
+              className="font-bold text-white leading-tight mb-4"
+              style={{ fontSize: "clamp(32px, 5vw, 52px)", letterSpacing: "-2px" }}
+            >
+              Control Testing
+            </h1>
+            <p className="text-[16px] text-white/60 max-w-[640px] leading-[1.75]">
+              Upload a test script, validate evidence against required controls, and
+              generate an audit workpaper — all in a single guided flow.
+            </p>
+          </div>
+        </section>
+
+        <div className="max-w-[1100px] mx-auto px-8 md:px-12 py-12 pb-24 space-y-8">
           <HowItWorks
+            defaultOpen
             steps={[
-              { number: 1, title: "Upload Test Script", desc: "Upload the control test script (CSV / XLSX) defining the controls in scope and the evidence required for each test step.", color: "#7213EA" },
-              { number: 2, title: "Validate Evidence", desc: "APEX validates uploaded evidence against required controls, checks completeness, and flags gaps before workpaper generation.", color: "#1E49E2" },
-              { number: 3, title: "Generate Workpaper", desc: "Review the validation summary and generate a structured audit workpaper ready for download and reporting.", color: "#098E7E" },
+              {
+                number: 1,
+                title: "Upload Test Script",
+                desc: "Upload the control test script (CSV / XLSX) defining the controls in scope and the evidence required for each test step.",
+                color: "#7213EA",
+              },
+              {
+                number: 2,
+                title: "Validate Evidence",
+                desc: "APEX validates uploaded evidence against required controls, checks completeness, and flags gaps before workpaper generation.",
+                color: "#1E49E2",
+              },
+              {
+                number: 3,
+                title: "Generate Workpaper",
+                desc: "Review the validation summary and generate a structured audit workpaper ready for download and reporting.",
+                color: "#098E7E",
+              },
             ]}
           />
-          <div className="flex items-center justify-center gap-2 mb-6">
-            {[
-              { num: 1, label: "Upload Script" },
-              { num: 2, label: "Validate Evidence" },
-              { num: 3, label: "Generate Workpaper" },
-            ].map((step, index) => (
-              <div key={step.num} className="flex items-center gap-2">
-                <div
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    stepNumber === step.num
-                      ? "bg-primary text-primary-foreground"
-                      : stepNumber > step.num
-                        ? "bg-primary/20 text-primary"
-                        : "bg-muted text-muted-foreground"
-                  }`}
-                  data-testid={`step-indicator-${step.num}`}
-                >
-                  {stepNumber > step.num ? (
-                    <CheckCircle2 className="h-4 w-4" />
-                  ) : (
-                    <span>{step.num}</span>
-                  )}
-                  <span className="hidden sm:inline">{step.label}</span>
-                </div>
-                {index < 2 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-              </div>
-            ))}
-          </div>
 
           {error && (
-            <Card className="border-destructive">
-              <CardContent className="py-4">
-                <div className="flex items-center gap-2 text-destructive">
-                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                  <p className="text-sm">{error}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              className={`${PANEL} ${PANEL_PAD} flex items-start gap-3`}
+              style={{ borderColor: "#E5001B" }}
+            >
+              <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#E5001B] mt-0.5" />
+              <div>
+                <p className="text-[14px] font-bold text-[#0C233C]">Something went wrong</p>
+                <p className="text-[13px] text-[#5A6478] mt-1">{error}</p>
+              </div>
+            </div>
           )}
 
           {currentStep === "upload_script" && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileSpreadsheet className="h-5 w-5" />
-                  Upload Test Script
-                </CardTitle>
-                <CardDescription>
-                  Upload the Excel test script that defines the controls, test steps, and expected evidence.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div
-                  {...getScriptRootProps()}
-                  className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                    isScriptDragActive
-                      ? "border-primary bg-primary/5"
-                      : "border-muted-foreground/25 hover:border-primary/50"
-                  }`}
-                  data-testid="dropzone-script"
-                >
-                  <input {...getScriptInputProps()} data-testid="input-script-file" />
-                  <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  {isScriptDragActive ? (
-                    <p className="text-primary font-medium">Drop the test script here...</p>
-                  ) : (
-                    <>
-                      <p className="text-foreground font-medium">Drag and drop the Excel test script here</p>
-                      <p className="text-muted-foreground text-sm mt-1">or click to browse (`.xlsx`, `.xlsm`)</p>
-                    </>
-                  )}
-                </div>
+            <section className={`${PANEL} ${PANEL_PAD}`}>
+              <SectionHeader
+                eyebrow="Step 1"
+                title="Upload Test Script"
+              />
+              <p className="text-[14px] text-[#5A6478] leading-relaxed mb-5">
+                Upload the Excel test script that defines the controls, test steps,
+                and expected evidence.
+              </p>
 
-                {testScriptFile && (
-                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm truncate max-w-xs">{testScriptFile.name}</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {(testScriptFile.size / 1024).toFixed(1)} KB
-                      </Badge>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setTestScriptFile(null)}
-                      data-testid="button-remove-script"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
+              <div
+                {...getScriptRootProps()}
+                className={`rounded-2xl p-8 text-center cursor-pointer transition-colors border-2 border-dashed ${
+                  isScriptDragActive
+                    ? "border-[#00338D] bg-[#EEF2FF]"
+                    : "border-[#E2E6EF] hover:border-[#00338D]/60 bg-[#F8FAFD]"
+                }`}
+                data-testid="dropzone-script"
+              >
+                <input {...getScriptInputProps()} data-testid="input-script-file" />
+                <Upload className="h-10 w-10 mx-auto text-[#8492A6] mb-3" />
+                {isScriptDragActive ? (
+                  <p className="text-[#00338D] font-bold text-[14px]">
+                    Drop the test script here…
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-[#0C233C] font-bold text-[14px]">
+                      Drag and drop the Excel test script here
+                    </p>
+                    <p className="text-[#8492A6] text-[12px] mt-1">
+                      or click to browse (.xlsx, .xlsm)
+                    </p>
+                  </>
                 )}
+              </div>
 
-                <Button
-                  onClick={handleStartAudit}
-                  disabled={!testScriptFile || isProcessing}
-                  className="w-full"
-                  data-testid="button-start-audit"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Parsing Test Script...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-4 w-4 mr-2" />
-                      Parse Test Script
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+              {testScriptFile && (
+                <div className="flex items-center justify-between gap-3 p-3 mt-4 bg-[#F0F2F7] rounded-xl border border-[#E2E6EF]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileSpreadsheet className="h-4 w-4 text-[#00338D] flex-shrink-0" />
+                    <span className="text-[13px] text-[#0C233C] truncate max-w-xs">
+                      {testScriptFile.name}
+                    </span>
+                    <Pill tone="neutral">
+                      {(testScriptFile.size / 1024).toFixed(1)} KB
+                    </Pill>
+                  </div>
+                  <button
+                    onClick={() => setTestScriptFile(null)}
+                    className={GHOST_ICON_BTN}
+                    data-testid="button-remove-script"
+                    aria-label="Remove test script"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              <button
+                onClick={handleStartAudit}
+                disabled={!testScriptFile || isProcessing}
+                className={`${PRIMARY_BTN} w-full mt-5`}
+                data-testid="button-start-audit"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Parsing Test Script…
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4" fill="white" />
+                    Parse Test Script
+                  </>
+                )}
+              </button>
+            </section>
           )}
 
           {(currentStep === "review_checklist" || currentStep === "upload_evidence") && (
             <>
               {warnings.length > 0 && (
-                <Card className="border-yellow-500/50">
-                  <CardContent className="py-4">
-                    <div className="flex items-start gap-2">
-                      <FileWarning className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400">Test script warnings</p>
+                <div
+                  className={`${PANEL} ${PANEL_PAD}`}
+                  style={{ borderColor: "#EAAA00" }}
+                >
+                  <div className="flex items-start gap-3">
+                    <FileWarning className="h-5 w-5 text-[#EAAA00] flex-shrink-0 mt-0.5" />
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-bold text-[#0C233C]">
+                        Test script warnings
+                      </p>
+                      <ul className="mt-2 space-y-1">
                         {warnings.map((warning, index) => (
-                          <p key={index} className="text-sm text-muted-foreground">
+                          <li key={index} className="text-[13px] text-[#5A6478]">
                             {warning}
-                          </p>
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Evidence Checklist
-                    <Badge variant="secondary">{controlsFound} control(s)</Badge>
-                  </CardTitle>
-                  <CardDescription>
-                    Review the evidence required for each parsed control, then submit the supporting files.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {evidenceChecklist
-                      .slice(checklistPage * CHECKLIST_PAGE_SIZE, (checklistPage + 1) * CHECKLIST_PAGE_SIZE)
-                      .map((item, index) => {
-                        const isSatisfied = filesProcessed.some(
-                          (file) =>
-                            file.validation_status === "accepted" &&
-                            file.satisfies_controls?.includes(item.control_id),
-                        );
+              <section className={`${PANEL} ${PANEL_PAD}`}>
+                <SectionHeader
+                  eyebrow="Evidence"
+                  title="Evidence Checklist"
+                  right={
+                    <Pill tone="navy">
+                      {controlsFound} control(s)
+                    </Pill>
+                  }
+                />
+                <p className="text-[14px] text-[#5A6478] leading-relaxed mb-5">
+                  Review the evidence required for each parsed control, then submit
+                  the supporting files.
+                </p>
 
-                        return (
-                          <div
-                            key={item.control_id}
-                            className="flex items-start gap-3 p-3 rounded-lg bg-muted/30"
-                            data-testid={`checklist-item-${checklistPage * CHECKLIST_PAGE_SIZE + index}`}
-                          >
-                            <div className="mt-0.5">
-                              {isSatisfied ? (
-                                <CheckCircle2 className="h-5 w-5 text-green-500" />
-                              ) : (
-                                <Clock className="h-5 w-5 text-muted-foreground" />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <Badge variant="outline" className="text-xs font-mono">
-                                  {item.control_id}
-                                </Badge>
-                                <Badge variant={isSatisfied ? "default" : "secondary"} className="text-xs">
-                                  {isSatisfied ? "Received" : "Pending"}
-                                </Badge>
-                              </div>
-                              <p className="text-sm mt-1 text-muted-foreground truncate">
-                                {item.control_description}
-                              </p>
-                              <p className="text-xs mt-0.5 text-primary/80">
-                                Required evidence: {item.evidence_required}
-                              </p>
-                            </div>
+                <div className="space-y-2">
+                  {evidenceChecklist
+                    .slice(
+                      checklistPage * CHECKLIST_PAGE_SIZE,
+                      (checklistPage + 1) * CHECKLIST_PAGE_SIZE,
+                    )
+                    .map((item, index) => {
+                      const isSatisfied = filesProcessed.some(
+                        (file) =>
+                          file.validation_status === "accepted" &&
+                          file.satisfies_controls?.includes(item.control_id),
+                      );
+
+                      return (
+                        <div
+                          key={item.control_id}
+                          className="flex items-start gap-3 p-4 rounded-xl bg-[#F8FAFD] border border-[#E2E6EF]"
+                          data-testid={`checklist-item-${
+                            checklistPage * CHECKLIST_PAGE_SIZE + index
+                          }`}
+                        >
+                          <div className="mt-0.5">
+                            {isSatisfied ? (
+                              <CheckCircle2 className="h-5 w-5 text-[#009A44]" />
+                            ) : (
+                              <Clock className="h-5 w-5 text-[#8492A6]" />
+                            )}
                           </div>
-                        );
-                      })}
-                  </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Pill tone="mono">{item.control_id}</Pill>
+                              <Pill tone={isSatisfied ? "success" : "neutral"}>
+                                {isSatisfied ? "Received" : "Pending"}
+                              </Pill>
+                            </div>
+                            <p className="text-[13px] mt-2 text-[#5A6478] truncate">
+                              {item.control_description}
+                            </p>
+                            <p className="text-[12px] mt-1 text-[#00338D]">
+                              Required evidence: {item.evidence_required}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
 
-                  {evidenceChecklist.length > CHECKLIST_PAGE_SIZE && (
-                    <div className="flex items-center justify-between mt-4 pt-3 border-t">
-                      <p className="text-sm text-muted-foreground">
-                        Showing {checklistPage * CHECKLIST_PAGE_SIZE + 1}-
-                        {Math.min((checklistPage + 1) * CHECKLIST_PAGE_SIZE, evidenceChecklist.length)} of{" "}
-                        {evidenceChecklist.length}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          disabled={checklistPage === 0}
-                          onClick={() => setChecklistPage((page) => page - 1)}
-                          data-testid="button-checklist-prev"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm px-2 text-muted-foreground">
-                          {checklistPage + 1} / {Math.ceil(evidenceChecklist.length / CHECKLIST_PAGE_SIZE)}
-                        </span>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          disabled={(checklistPage + 1) * CHECKLIST_PAGE_SIZE >= evidenceChecklist.length}
-                          onClick={() => setChecklistPage((page) => page + 1)}
-                          data-testid="button-checklist-next"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
+                {evidenceChecklist.length > CHECKLIST_PAGE_SIZE && (
+                  <div className="flex items-center justify-between mt-5 pt-4 border-t border-[#E2E6EF]">
+                    <p className="text-[12px] text-[#8492A6]">
+                      Showing {checklistPage * CHECKLIST_PAGE_SIZE + 1}-
+                      {Math.min(
+                        (checklistPage + 1) * CHECKLIST_PAGE_SIZE,
+                        evidenceChecklist.length,
+                      )}{" "}
+                      of {evidenceChecklist.length}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className={GHOST_ICON_BTN}
+                        disabled={checklistPage === 0}
+                        onClick={() => setChecklistPage((page) => page - 1)}
+                        data-testid="button-checklist-prev"
+                        aria-label="Previous page"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <span className="text-[12px] px-2 text-[#5A6478] font-semibold">
+                        {checklistPage + 1} /{" "}
+                        {Math.ceil(evidenceChecklist.length / CHECKLIST_PAGE_SIZE)}
+                      </span>
+                      <button
+                        className={GHOST_ICON_BTN}
+                        disabled={
+                          (checklistPage + 1) * CHECKLIST_PAGE_SIZE >=
+                          evidenceChecklist.length
+                        }
+                        onClick={() => setChecklistPage((page) => page + 1)}
+                        data-testid="button-checklist-next"
+                        aria-label="Next page"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                )}
+              </section>
 
               {filesProcessed.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Evidence Validation Results
-                      {evidenceSummary && (
-                        <Badge variant="secondary">
+                <section className={`${PANEL} ${PANEL_PAD}`}>
+                  <SectionHeader
+                    eyebrow="Validation"
+                    title="Evidence Validation Results"
+                    right={
+                      evidenceSummary ? (
+                        <Pill tone="navy">
                           {evidenceSummary.received}/{evidenceSummary.total_controls} received
-                        </Badge>
-                      )}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {filesProcessed.map((file, index) => (
+                        </Pill>
+                      ) : undefined
+                    }
+                  />
+                  <div className="space-y-2">
+                    {filesProcessed.map((file, index) => {
+                      const accepted = file.validation_status === "accepted";
+                      return (
                         <div
                           key={`${file.filename}-${index}`}
-                          className={`flex items-start gap-3 p-3 rounded-lg ${
-                            file.validation_status === "accepted" ? "bg-green-500/10" : "bg-destructive/10"
-                          }`}
+                          className="flex items-start gap-3 p-4 rounded-xl border"
+                          style={{
+                            background: accepted ? "#F1FAF4" : "#FDF1F3",
+                            borderColor: accepted ? "#B7E0C5" : "#F2B7BF",
+                          }}
                           data-testid={`validation-result-${index}`}
                         >
-                          {file.validation_status === "accepted" ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          {accepted ? (
+                            <CheckCircle2 className="h-5 w-5 text-[#009A44] flex-shrink-0 mt-0.5" />
                           ) : (
-                            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                            <AlertCircle className="h-5 w-5 text-[#E5001B] flex-shrink-0 mt-0.5" />
                           )}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-sm font-medium truncate">{file.filename}</span>
-                              <Badge
-                                variant={file.validation_status === "accepted" ? "default" : "destructive"}
-                                className="text-xs"
-                              >
+                              <span className="text-[13px] font-bold text-[#0C233C] truncate">
+                                {file.filename}
+                              </span>
+                              <Pill tone={accepted ? "success" : "danger"}>
                                 {file.validation_status}
-                              </Badge>
+                              </Pill>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">{file.reason}</p>
-                            {file.satisfies_controls && file.satisfies_controls.length > 0 && (
-                              <div className="flex items-center gap-1 mt-1 flex-wrap">
-                                <span className="text-xs text-muted-foreground">Tagged controls:</span>
-                                {file.satisfies_controls.map((controlId) => (
-                                  <Badge key={controlId} variant="outline" className="text-xs font-mono">
-                                    {controlId}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
+                            <p className="text-[12px] text-[#5A6478] mt-1">
+                              {file.reason}
+                            </p>
+                            {file.satisfies_controls &&
+                              file.satisfies_controls.length > 0 && (
+                                <div className="flex items-center gap-1 mt-2 flex-wrap">
+                                  <span className="text-[12px] text-[#8492A6]">
+                                    Tagged controls:
+                                  </span>
+                                  {file.satisfies_controls.map((controlId) => (
+                                    <Pill key={controlId} tone="mono">
+                                      {controlId}
+                                    </Pill>
+                                  ))}
+                                </div>
+                              )}
                           </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
+
+              <section className={`${PANEL} ${PANEL_PAD}`}>
+                <SectionHeader
+                  eyebrow="Step 2"
+                  title="Upload Evidence Files"
+                />
+                <p className="text-[14px] text-[#5A6478] leading-relaxed mb-5">
+                  Submit the evidence files required by the checklist. Each file is
+                  validated and mapped to the relevant controls.
+                </p>
+
+                <div
+                  {...getEvidenceRootProps()}
+                  className={`rounded-2xl p-8 text-center cursor-pointer transition-colors border-2 border-dashed ${
+                    isEvidenceDragActive
+                      ? "border-[#00338D] bg-[#EEF2FF]"
+                      : "border-[#E2E6EF] hover:border-[#00338D]/60 bg-[#F8FAFD]"
+                  }`}
+                  data-testid="dropzone-evidence"
+                >
+                  <input
+                    {...getEvidenceInputProps()}
+                    data-testid="input-evidence-files"
+                  />
+                  <Upload className="h-10 w-10 mx-auto text-[#8492A6] mb-3" />
+                  {isEvidenceDragActive ? (
+                    <p className="text-[#00338D] font-bold text-[14px]">
+                      Drop the evidence files here…
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-[#0C233C] font-bold text-[14px]">
+                        Drag and drop the evidence files here
+                      </p>
+                      <p className="text-[#8492A6] text-[12px] mt-1">
+                        or click to browse (PDF, DOCX, XLSX, CSV, TXT, images)
+                      </p>
+                    </>
+                  )}
+                </div>
+
+                {evidenceFiles.length > 0 && (
+                  <div className="space-y-2 mt-4">
+                    <p className="text-[12px] font-bold text-[#0C233C] uppercase tracking-[1.5px]">
+                      Files queued for submission ({evidenceFiles.length})
+                    </p>
+                    <div className="space-y-2 max-h-48 overflow-auto">
+                      {evidenceFiles.map((file, index) => (
+                        <div
+                          key={`${file.name}-${index}`}
+                          className="flex items-center justify-between gap-3 p-3 bg-[#F0F2F7] rounded-xl border border-[#E2E6EF]"
+                          data-testid={`evidence-file-${index}`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText className="h-4 w-4 text-[#00338D] flex-shrink-0" />
+                            <span className="text-[13px] text-[#0C233C] truncate max-w-xs">
+                              {file.name}
+                            </span>
+                            <Pill tone="neutral">
+                              {(file.size / 1024).toFixed(1)} KB
+                            </Pill>
+                          </div>
+                          <button
+                            className={GHOST_ICON_BTN}
+                            onClick={() => removeEvidenceFile(index)}
+                            data-testid={`button-remove-evidence-${index}`}
+                            aria-label="Remove file"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  </div>
+                )}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Upload className="h-5 w-5" />
-                    Upload Evidence Files
-                  </CardTitle>
-                  <CardDescription>
-                    Submit the evidence files required by the checklist. Each file is validated and mapped to the relevant controls.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div
-                    {...getEvidenceRootProps()}
-                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                      isEvidenceDragActive
-                        ? "border-primary bg-primary/5"
-                        : "border-muted-foreground/25 hover:border-primary/50"
-                    }`}
-                    data-testid="dropzone-evidence"
+                <div className="flex items-center gap-3 flex-wrap mt-5">
+                  <button
+                    onClick={handleUploadEvidence}
+                    disabled={evidenceFiles.length === 0 || isProcessing}
+                    className={PRIMARY_BTN}
+                    data-testid="button-upload-evidence"
                   >
-                    <input {...getEvidenceInputProps()} data-testid="input-evidence-files" />
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    {isEvidenceDragActive ? (
-                      <p className="text-primary font-medium">Drop the evidence files here...</p>
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Validating Evidence…
+                      </>
                     ) : (
                       <>
-                        <p className="text-foreground font-medium">Drag and drop the evidence files here</p>
-                        <p className="text-muted-foreground text-sm mt-1">
-                          or click to browse (PDF, DOCX, XLSX, CSV, TXT, images)
-                        </p>
+                        <Upload className="h-4 w-4" />
+                        Submit Evidence
                       </>
                     )}
-                  </div>
+                  </button>
 
-                  {evidenceFiles.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Files queued for submission ({evidenceFiles.length})</p>
-                      <div className="space-y-2 max-h-48 overflow-auto">
-                        {evidenceFiles.map((file, index) => (
-                          <div
-                            key={`${file.name}-${index}`}
-                            className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                            data-testid={`evidence-file-${index}`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-primary" />
-                              <span className="text-sm truncate max-w-xs">{file.name}</span>
-                              <Badge variant="secondary" className="text-xs">
-                                {(file.size / 1024).toFixed(1)} KB
-                              </Badge>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeEvidenceFile(index)}
-                              data-testid={`button-remove-evidence-${index}`}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Button
-                      onClick={handleUploadEvidence}
-                      disabled={evidenceFiles.length === 0 || isProcessing}
-                      data-testid="button-upload-evidence"
+                  {showGenerateAction && (
+                    <button
+                      onClick={handleGenerateWorkpaper}
+                      className={readyToGenerate ? PRIMARY_BTN : SECONDARY_BTN}
+                      data-testid={
+                        readyToGenerate
+                          ? "button-generate-workpaper"
+                          : "button-force-generate"
+                      }
                     >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Validating Evidence...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="h-4 w-4 mr-2" />
-                          Submit Evidence
-                        </>
-                      )}
-                    </Button>
-
-                    {showGenerateAction && (
-                      <Button
-                        onClick={handleGenerateWorkpaper}
-                        variant={readyToGenerate ? "default" : "secondary"}
-                        data-testid={readyToGenerate ? "button-generate-workpaper" : "button-force-generate"}
-                      >
-                        <Play className="h-4 w-4 mr-2" />
-                        {readyToGenerate ? "Generate Workpaper" : "Generate with Partial Evidence"}
-                      </Button>
-                    )}
-                  </div>
-
-                  {pendingControls.length > 0 && !readyToGenerate && (
-                    <div className="mt-4 p-3 bg-muted/30 rounded-lg">
-                      <p className="text-sm font-medium mb-2 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Outstanding Evidence ({pendingControls.length})
-                      </p>
-                      <div className="space-y-1">
-                        {pendingControls.map((control) => (
-                          <div key={control.control_id} className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Badge variant="outline" className="text-xs font-mono">
-                              {control.control_id}
-                            </Badge>
-                            <span className="truncate">
-                              {control.evidence_required || control.control_description || ""}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                      <Play
+                        className="h-4 w-4"
+                        fill={readyToGenerate ? "white" : "currentColor"}
+                      />
+                      {readyToGenerate
+                        ? "Generate Workpaper"
+                        : "Generate with Partial Evidence"}
+                    </button>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+
+                {pendingControls.length > 0 && !readyToGenerate && (
+                  <div className="mt-5 p-4 bg-[#F8FAFD] rounded-xl border border-[#E2E6EF]">
+                    <p className="text-[13px] font-bold text-[#0C233C] mb-3 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-[#8492A6]" />
+                      Outstanding Evidence ({pendingControls.length})
+                    </p>
+                    <div className="space-y-1.5">
+                      {pendingControls.map((control) => (
+                        <div
+                          key={control.control_id}
+                          className="flex items-center gap-2 text-[13px] text-[#5A6478]"
+                        >
+                          <Pill tone="mono">{control.control_id}</Pill>
+                          <span className="truncate">
+                            {control.evidence_required ||
+                              control.control_description ||
+                              ""}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
             </>
           )}
 
           {currentStep === "generating" && (
-            <Card>
-              <CardContent className="py-12">
-                <div className="flex flex-col items-center justify-center space-y-4">
-                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                  <p className="text-lg font-medium">Generating Audit Workpaper...</p>
-                  <p className="text-sm text-muted-foreground text-center max-w-md">
-                    The platform is validating control outcomes and preparing the workpaper. This can take a few minutes.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <section className={`${PANEL} p-12`}>
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-[#7213EA]" />
+                <p className="text-[18px] font-bold text-[#0C233C]">
+                  Generating Audit Workpaper…
+                </p>
+                <p className="text-[14px] text-[#5A6478] text-center max-w-md leading-relaxed">
+                  The platform is validating control outcomes and preparing the
+                  workpaper. This can take a few minutes.
+                </p>
+              </div>
+            </section>
           )}
 
           {currentStep === "results" && (
             <>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    Control Testing Complete
-                  </CardTitle>
-                  <CardDescription>{resultMessage}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-5">
-                  {workpaperSummary && (
-                    <>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{workpaperSummary.controls_tested} control(s) tested</span>
-                        <Badge
-                          variant="outline"
-                          className={
-                            workpaperSummary.overall_result === "COMPLIANT"
-                              ? "border-green-400 text-green-500 dark:text-green-400"
-                              : workpaperSummary.overall_result === "NON_COMPLIANT"
-                                ? "border-red-400 text-red-500 dark:text-red-400"
-                                : "border-yellow-400 text-yellow-500 dark:text-yellow-400"
-                          }
+              <section className={`${PANEL} p-7`}>
+                <SectionHeader
+                  eyebrow="Output"
+                  title="Control Testing Complete"
+                  right={
+                    workpaperSummary ? (
+                      <Pill tone={resultTone}>
+                        {(workpaperSummary.overall_result ?? "").replace(/_/g, " ")}
+                      </Pill>
+                    ) : undefined
+                  }
+                />
+                {resultMessage && (
+                  <p className="text-[14px] text-[#5A6478] leading-relaxed mb-5">
+                    {resultMessage}
+                  </p>
+                )}
+
+                {workpaperSummary && (
+                  <div className="space-y-5">
+                    <div className="flex items-center gap-2 text-[13px] text-[#8492A6]">
+                      <CheckCircle2 className="h-4 w-4 text-[#009A44]" />
+                      <span>
+                        {workpaperSummary.controls_tested} control(s) tested
+                      </span>
+                    </div>
+
+                    <ControlTestingKpis
+                      controlsTested={workpaperSummary.controls_tested}
+                      issuesIdentified={
+                        workpaperSummary.fail_count + workpaperSummary.partial_count
+                      }
+                      severityCounts={workpaperSummary.severity_counts}
+                    />
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      {[
+                        {
+                          val: workpaperSummary.pass_count,
+                          label: "Pass",
+                          color: "#009A44",
+                          bg: "#E6F5EC",
+                        },
+                        {
+                          val: workpaperSummary.fail_count,
+                          label: "Fail",
+                          color: "#E5001B",
+                          bg: "#FCE6E9",
+                        },
+                        {
+                          val: workpaperSummary.partial_count,
+                          label: "Partial",
+                          color: "#EAAA00",
+                          bg: "#FFF6E0",
+                        },
+                        {
+                          val: workpaperSummary.controls_with_evidence,
+                          label: "With Evidence",
+                          color: "#1E49E2",
+                          bg: "#EEF2FF",
+                        },
+                      ].map((stat) => (
+                        <div
+                          key={stat.label}
+                          className="rounded-2xl border border-[#E2E6EF] shadow-sm p-5 relative transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                          style={{ background: stat.bg }}
                         >
-                          {(workpaperSummary.overall_result ?? "").replace(/_/g, " ")}
-                        </Badge>
-                      </div>
-
-                      <ControlTestingKpis
-                        controlsTested={workpaperSummary.controls_tested}
-                        issuesIdentified={workpaperSummary.fail_count + workpaperSummary.partial_count}
-                        severityCounts={workpaperSummary.severity_counts}
-                      />
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div className="p-4 bg-green-500/10 rounded-lg text-center">
-                          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                            {workpaperSummary.pass_count}
+                          <div
+                            className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+                            style={{ background: stat.color }}
+                          />
+                          <p
+                            className="font-bold text-[32px] leading-none tracking-tight mt-1"
+                            style={{ color: stat.color }}
+                          >
+                            {stat.val}
                           </p>
-                          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Pass</p>
-                        </div>
-                        <div className="p-4 bg-destructive/10 rounded-lg text-center">
-                          <p className="text-2xl font-bold text-destructive">{workpaperSummary.fail_count}</p>
-                          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Fail</p>
-                        </div>
-                        <div className="p-4 bg-yellow-500/10 rounded-lg text-center">
-                          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                            {workpaperSummary.partial_count}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Partial</p>
-                        </div>
-                        <div className="p-4 bg-blue-500/10 rounded-lg text-center">
-                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                            {workpaperSummary.controls_with_evidence}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">
-                            Controls With Evidence
+                          <p className="text-[11px] text-[#5A6478] mt-2 uppercase tracking-[1.5px] font-bold">
+                            {stat.label}
                           </p>
                         </div>
-                      </div>
-                    </>
-                  )}
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                  {downloadUrl && (
-                    <Button
-                      onClick={handleDownloadWorkpaper}
-                      className="w-full"
-                      data-testid="button-download-workpaper"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Workpaper
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+                {downloadUrl && (
+                  <button
+                    onClick={handleDownloadWorkpaper}
+                    className={`${PRIMARY_BTN} w-full mt-6`}
+                    data-testid="button-download-workpaper"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download Workpaper
+                  </button>
+                )}
+              </section>
 
-              <div className="flex items-center justify-center gap-4">
-                <Button variant="outline" onClick={handleNewAudit} data-testid="button-new-audit">
-                  <RotateCcw className="h-4 w-4 mr-2" />
+              <div className="flex items-center justify-center">
+                <button
+                  className={SECONDARY_BTN}
+                  onClick={handleNewAudit}
+                  data-testid="button-new-audit"
+                >
+                  <RotateCcw className="h-4 w-4" />
                   New Audit
-                </Button>
+                </button>
               </div>
             </>
           )}
         </div>
-      </div>
+        <Footer />
+      </main>
     </div>
   );
 }
