@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useCrossNav } from "@/contexts/CrossNavContext";
 import { useLibraryMetrics } from "@/contexts/LibraryMetricsContext";
@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import {
   Upload, X, Play, RotateCcw, Search, Trash2, ShieldCheck,
   LayoutDashboard, List, ChevronDown, ChevronRight, BookOpen,
-  FileText, Link2, Layers, PanelLeftClose, PanelLeftOpen,
+  FileText, Link2, Layers,
   Activity, Download,
 } from "lucide-react";
 import {
@@ -474,29 +474,8 @@ export default function ControlsLibraryPage() {
   const { pendingControlId, setPendingControlId, setPendingObligationId, pendingQualityAnalysis, setPendingQualityAnalysis } = useCrossNav();
   const { refreshMetrics } = useLibraryMetrics();
 
-  // Resizable panel
-  const [panelWidth, setPanelWidth] = useState(320);
-  const [leftPanelOpen, setLeftPanelOpen] = useState(true);
+  // Upload section collapse
   const [uploadSectionOpen, setUploadSectionOpen] = useState(true);
-  const dragRef = useRef<{ startX: number; startW: number } | null>(null);
-
-  const onDividerMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    dragRef.current = { startX: e.clientX, startW: panelWidth };
-    const onMove = (ev: MouseEvent) => {
-      if (!dragRef.current) return;
-      const delta = ev.clientX - dragRef.current.startX;
-      const next = Math.min(600, Math.max(200, dragRef.current.startW + delta));
-      setPanelWidth(next);
-    };
-    const onUp = () => {
-      dragRef.current = null;
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-  }, [panelWidth]);
 
   // Upload state
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
@@ -981,283 +960,8 @@ export default function ControlsLibraryPage() {
     <div className="h-full flex flex-col overflow-hidden select-none">
       <div className="flex-1 flex overflow-hidden">
 
-      {/* ── LEFT PANEL ───────────────────────────────────────────────────────── */}
-      <div className="shrink-0 flex flex-col bg-background/50 overflow-hidden transition-[width] duration-200" style={{ width: leftPanelOpen ? panelWidth : 0 }}>
-
-        {/* Upload section (collapsible) */}
-        <div className="p-4 border-b space-y-3">
-          <button
-            type="button"
-            onClick={() => setUploadSectionOpen(o => !o)}
-            className="w-full flex items-center justify-between gap-2"
-          >
-            <h2 className="text-sm font-semibold flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-primary" />
-              Add Policy Documents
-            </h2>
-            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${uploadSectionOpen ? "" : "-rotate-90"}`} />
-          </button>
-
-          {uploadSectionOpen && <>
-          <div
-            className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
-              uploadFiles.length > 0
-                ? "border-primary/50 bg-primary/5"
-                : "border-muted-foreground/25 hover:border-primary/50"
-            }`}
-            onClick={() => document.getElementById("ctrl-file-input")?.click()}
-          >
-            <input
-              id="ctrl-file-input"
-              type="file"
-              multiple
-              accept=".pdf,.docx,.doc,.txt,.md,.xlsx,.xls,.csv,.png,.jpg,.jpeg"
-              className="hidden"
-              onChange={e => {
-                const files = Array.from(e.target.files || []);
-                if (files.length) setUploadFiles(prev => [...prev, ...files]);
-                e.target.value = "";
-              }}
-            />
-            <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
-            <p className="text-xs text-foreground font-medium">Click to browse</p>
-            <p className="text-xs text-muted-foreground">PDF, Word, TXT, MD, Excel, CSV or image</p>
-          </div>
-
-          {uploadFiles.length > 0 && (
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                {uploadFiles.length} file{uploadFiles.length !== 1 ? "s" : ""} queued
-              </p>
-              <div className="max-h-36 overflow-auto space-y-1 pr-0.5">
-                {uploadFiles.map((f, i) => (
-                  <div key={i} className="flex items-start gap-1.5 text-xs bg-muted/50 rounded px-2 py-1.5">
-                    <FileText className="h-3 w-3 text-muted-foreground shrink-0 mt-px" />
-                    <span className="flex-1 break-all leading-tight min-w-0">{f.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-4 w-4 shrink-0 mt-px"
-                      onClick={() => setUploadFiles(prev => prev.filter((_, j) => j !== i))}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-              <Button
-                size="sm"
-                className="w-full text-xs"
-                disabled={ingesting}
-                onClick={handleIngest}
-              >
-                {ingesting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1.5" />
-                    Extracting...
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3 w-3 mr-1.5" />
-                    Extract Controls
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-
-          {ingestResults.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-[10px] font-semibold text-green-600 uppercase tracking-wide">Recently added</p>
-              {ingestResults.map((r, i) => (
-                <div key={i} className="text-xs p-2 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded space-y-1">
-                  <p className="font-medium break-words leading-tight text-foreground">{r.filename}</p>
-                  <div className="flex items-center gap-1 flex-wrap">
-                    <Badge variant="outline" className="text-green-700 border-green-400 text-[10px]">{r.total_controls} controls</Badge>
-                    {!r.mongo_saved && (
-                      <Badge variant="outline" className="text-orange-600 border-orange-400 text-[10px]">⚠ no DB</Badge>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          </>}
-        </div>
-
-        {/* Library header */}
-        <div className="flex items-center justify-between px-4 py-2 border-b gap-1">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide shrink-0">
-            Documents
-            {controlsDocs.length > 0 && (
-              <Badge variant="secondary" className="ml-2 text-[10px]">{controlsDocs.length}</Badge>
-            )}
-          </span>
-          <div className="flex items-center gap-1">
-            <Button
-              variant={rightPanelView === "dashboard" ? "secondary" : "ghost"}
-              size="icon"
-              className="h-6 w-6"
-              title="Dashboard"
-              onClick={() => { setRightPanelView("dashboard"); setSelectedDoc(null); }}
-            >
-              <LayoutDashboard className="h-3 w-3" />
-            </Button>
-            <Button
-              variant={controlsViewMode === "merged" && rightPanelView === "controls" ? "secondary" : "ghost"}
-              size="icon"
-              className="h-6 w-6"
-              title="Merged View (all docs deduplicated)"
-              disabled={controlsDocs.length === 0 || mergedLoading}
-              onClick={fetchMerged}
-            >
-              {mergedLoading
-                ? <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" />
-                : <Layers className="h-3 w-3" />
-              }
-            </Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={fetchDocs} disabled={docsLoading}>
-              <RotateCcw className={`h-3 w-3 ${docsLoading ? "animate-spin" : ""}`} />
-            </Button>
-            {controlsDocs.length > 0 && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10"
-                title="Clear entire controls library"
-                disabled={clearingLibrary}
-                onClick={() => setShowClearConfirm(true)}
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            )}
-          </div>
-        </div>
-        {/* Inline clear confirmation */}
-        {showClearConfirm && (
-          <div className="mx-3 my-2 p-3 rounded-lg border border-destructive/40 bg-destructive/5 space-y-2">
-            <p className="text-xs font-medium text-destructive">Clear entire controls library?</p>
-            <p className="text-[11px] text-muted-foreground">This will permanently delete all {controlsDocs.length} document(s) and their extracted controls.</p>
-            <div className="flex gap-2">
-              <Button size="sm" variant="destructive" className="h-7 text-xs flex-1" onClick={handleClearLibrary} disabled={clearingLibrary}>
-                {clearingLibrary ? <><div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1.5" />Clearing...</> : "Yes, clear all"}
-              </Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs flex-1" onClick={() => setShowClearConfirm(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Document list */}
-        <ScrollArea className="flex-1">
-          {docsLoading && (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-            </div>
-          )}
-          {!docsLoading && controlsDocs.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-8 px-4">
-              No documents yet. Upload a policy document above.
-            </p>
-          )}
-          {!docsLoading && controlsDocs.length > 0 && (
-            <div className="p-2 space-y-1">
-              {controlsDocs.map((doc, i) => {
-                const isSelected = selectedDoc?.document_id === doc.document_id;
-                const topDomains = Object.entries(doc.controls_by_domain ?? {})
-                  .sort((a, b) => b[1] - a[1])
-                  .slice(0, 3);
-                return (
-                  <div
-                    key={i}
-                    className={`rounded-lg border cursor-pointer transition-colors min-w-0 ${
-                      isSelected
-                        ? "border-primary bg-primary/5"
-                        : "hover:border-primary/50 hover:bg-muted/40"
-                    }`}
-                    onClick={() => handleDocClick(doc)}
-                  >
-                    <div className="p-2.5 space-y-1.5">
-                      {/* Filename row with delete */}
-                      <div className="flex items-start gap-1.5 min-w-0">
-                        <FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-px" />
-                        <p className="text-xs font-semibold break-all leading-snug flex-1 min-w-0">
-                          {doc.source_filename}
-                        </p>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5 shrink-0 -mt-0.5"
-                          onClick={e => { e.stopPropagation(); handleDelete(doc.document_id); }}
-                        >
-                          <Trash2 className="h-3 w-3 text-destructive" />
-                        </Button>
-                      </div>
-                      {/* Badges row */}
-                      <div className="flex flex-wrap gap-1 pl-5">
-                        <Badge variant="secondary" className="text-[10px]">{doc.total_controls} controls</Badge>
-                        {topDomains.map(([d, cnt], di) => {
-                          const hue = HUES[allDomainNames.indexOf(d) % HUES.length];
-                          return (
-                            <Badge
-                              key={di}
-                              variant="outline"
-                              className="text-[10px] capitalize"
-                              style={{
-                                borderColor: `hsl(${hue},60%,60%)`,
-                                color: `hsl(${hue},60%,40%)`,
-                              }}
-                            >
-                              {d.replace(/_/g, " ")} · {cnt}
-                            </Badge>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </ScrollArea>
-      </div>
-
-      {/* ── DIVIDER ─────────────────────────────────────────────────────────── */}
-      {leftPanelOpen && (
-        <div
-          className="w-1 shrink-0 cursor-col-resize hover:bg-primary/30 active:bg-primary/50 transition-colors bg-border"
-          onMouseDown={onDividerMouseDown}
-        />
-      )}
-
-      {/* ── RIGHT PANEL ─────────────────────────────────────────────────────── */}
+      {/* ── MAIN PANEL ──────────────────────────────────────────────────────── */}
       <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-
-        {/* ── PANEL TOGGLE (dark, blends into TraceNavBar/hero) ─────────────── */}
-        <div className="shrink-0 flex items-center px-3 py-1.5" style={{ background: "#0C233C" }}>
-          <button
-            onClick={() => setLeftPanelOpen(o => !o)}
-            title={leftPanelOpen ? "Collapse panel" : "Expand panel"}
-            className="h-7 w-7 inline-flex items-center justify-center rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            {leftPanelOpen
-              ? <PanelLeftClose className="h-4 w-4" />
-              : <PanelLeftOpen className="h-4 w-4" />}
-          </button>
-          <div className="ml-auto">
-            <button
-              disabled={remapping || controlsDocs.length === 0}
-              onClick={handleRemapObligations}
-              title="Re-map all controls to regulatory obligations"
-              className="inline-flex items-center gap-1.5 h-7 px-3 text-[12px] font-semibold rounded-md border border-white/20 text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              {remapping
-                ? <><div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" /> Remapping…</>
-                : <><Link2 className="h-3.5 w-3.5" /> Map Obligations</>}
-            </button>
-          </div>
-        </div>
 
         {/* ── DASHBOARD ──────────────────────────────────────────────────────── */}
         {rightPanelView === "dashboard" && (
@@ -1303,6 +1007,379 @@ export default function ControlsLibraryPage() {
               </div>
             </section>
             <div className="p-7 space-y-6">
+
+              {/* ── Section A: Upload Policy Documents (collapsible) ─────────── */}
+              <div>
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between pb-4 border-b-2 border-[#E2E6EF] mb-5"
+                  onClick={() => setUploadSectionOpen(o => !o)}
+                >
+                  <div className="text-left">
+                    <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">
+                      Data Inputs
+                    </div>
+                    <div className="font-bold text-[#0C233C] text-[20px] tracking-tight">
+                      Upload Policy Documents
+                    </div>
+                  </div>
+                  <ChevronDown
+                    size={22}
+                    className={`text-[#8492A6] transition-transform duration-200 ${uploadSectionOpen ? "" : "-rotate-90"}`}
+                  />
+                </button>
+                {uploadSectionOpen && (
+                  <>
+                    <div
+                      className={`bg-white rounded-2xl p-6 transition-all duration-200 grid grid-cols-1 md:grid-cols-3 gap-6 items-start ${
+                        uploadFiles.length > 0
+                          ? "border border-[#009A44] shadow-sm"
+                          : "border-2 border-dashed border-[#E2E6EF] shadow-sm"
+                      }`}
+                    >
+                      {/* Left third: icon + title + description */}
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ background: "#EEF2FF" }}
+                          >
+                            <ShieldCheck size={22} style={{ color: "#1E49E2" }} />
+                          </div>
+                          <div>
+                            <div className="font-bold text-[#0C233C] text-[15px]">Policy Documents</div>
+                            <div className="text-[12px] text-[#8492A6] mt-0.5">PDF / Word / Excel / CSV / TXT / MD / Image</div>
+                          </div>
+                        </div>
+                        <p className="text-[13px] text-[#5A6478] leading-relaxed">
+                          Upload one or more company policy documents. TRACE will extract controls,
+                          classify them by domain, and map each one to regulatory obligations.
+                        </p>
+                      </div>
+
+                      {/* Middle third: dropzone */}
+                      <div
+                        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors min-h-[160px] flex flex-col items-center justify-center ${
+                          uploadFiles.length > 0
+                            ? "border-[#009A44]/50 bg-[#009A44]/5"
+                            : "border-[#E2E6EF] hover:border-[#1E49E2]/50 hover:bg-[#EEF2FF]/40"
+                        }`}
+                        onClick={() => document.getElementById("ctrl-file-input")?.click()}
+                      >
+                        <input
+                          id="ctrl-file-input"
+                          type="file"
+                          multiple
+                          accept=".pdf,.docx,.doc,.txt,.md,.xlsx,.xls,.csv,.png,.jpg,.jpeg"
+                          className="hidden"
+                          onChange={e => {
+                            const files = Array.from(e.target.files || []);
+                            if (files.length) setUploadFiles(prev => [...prev, ...files]);
+                            e.target.value = "";
+                          }}
+                        />
+                        <Upload className="h-7 w-7 text-[#1E49E2] mb-2" />
+                        <p className="text-[13px] text-[#0C233C] font-semibold">Click to browse</p>
+                        <p className="text-[11px] text-[#8492A6] mt-0.5">
+                          PDF, Word, TXT, MD, Excel, CSV or image
+                        </p>
+                        <button
+                          type="button"
+                          className="mt-3 inline-flex items-center gap-2 text-[12px] font-semibold rounded-lg px-3.5 py-1.5 transition-colors"
+                          style={{ background: "#EEF2FF", color: "#1E49E2" }}
+                          onClick={e => { e.stopPropagation(); document.getElementById("ctrl-file-input")?.click(); }}
+                        >
+                          <Upload size={13} />
+                          Choose File
+                        </button>
+                      </div>
+
+                      {/* Right third: queued files / extract button / placeholder */}
+                      <div className="flex flex-col gap-3 min-h-[160px]">
+                        {uploadFiles.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center text-center h-full py-6 border border-dashed border-[#E2E6EF] rounded-xl bg-[#F7F9FC]">
+                            <FileText className="h-7 w-7 text-[#8492A6]/50 mb-2" />
+                            <p className="text-[12px] text-[#5A6478] font-semibold">No files queued</p>
+                            <p className="text-[11px] text-[#8492A6] mt-0.5 max-w-[200px]">
+                              Selected files will appear here before extraction
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[1.5px]">
+                              {uploadFiles.length} file{uploadFiles.length !== 1 ? "s" : ""} queued
+                            </p>
+                            <div className="max-h-32 overflow-auto space-y-1 pr-0.5">
+                              {uploadFiles.map((f, i) => (
+                                <div key={i} className="flex items-start gap-1.5 text-xs bg-[#F7F9FC] border border-[#E2E6EF] rounded-md px-2 py-1.5">
+                                  <FileText className="h-3 w-3 text-[#8492A6] shrink-0 mt-px" />
+                                  <span className="flex-1 break-all leading-tight min-w-0 text-[#0C233C]">{f.name}</span>
+                                  <button
+                                    type="button"
+                                    className="h-4 w-4 shrink-0 mt-px inline-flex items-center justify-center text-[#8492A6] hover:text-[#0C233C]"
+                                    onClick={() => setUploadFiles(prev => prev.filter((_, j) => j !== i))}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                            <button
+                              type="button"
+                              className="inline-flex items-center justify-center gap-2 text-[13px] font-semibold text-white rounded-xl px-4 py-2.5 transition-colors disabled:opacity-50 disabled:cursor-wait"
+                              style={{ background: "#00338D" }}
+                              disabled={ingesting}
+                              onClick={handleIngest}
+                            >
+                              {ingesting ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                                  Extracting…
+                                </>
+                              ) : (
+                                <>
+                                  <Play className="h-3.5 w-3.5" fill="white" />
+                                  Extract Controls
+                                </>
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Recently added strip */}
+                    {ingestResults.length > 0 && (
+                      <div className="mt-4 bg-white rounded-2xl border border-[#009A44]/40 shadow-sm p-4">
+                        <p className="text-[10px] font-bold text-[#009A44] uppercase tracking-[1.5px] mb-2">
+                          Recently added
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {ingestResults.map((r, i) => (
+                            <div
+                              key={i}
+                              className="text-xs px-3 py-1.5 bg-[#009A44]/5 border border-[#009A44]/30 rounded-lg flex items-center gap-2"
+                            >
+                              <FileText className="h-3 w-3 text-[#009A44] shrink-0" />
+                              <span className="font-medium text-[#0C233C] break-all">{r.filename}</span>
+                              <Badge variant="outline" className="text-[#009A44] border-[#009A44]/40 text-[10px]">
+                                {r.total_controls} controls
+                              </Badge>
+                              {!r.mongo_saved && (
+                                <Badge variant="outline" className="text-orange-600 border-orange-400 text-[10px]">
+                                  ⚠ no DB
+                                </Badge>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* ── Section B: Documents (horizontal grid) ───────────────────── */}
+              <div>
+                <div className="w-full flex items-center justify-between pb-4 border-b-2 border-[#E2E6EF] mb-5 gap-3 flex-wrap">
+                  <div className="text-left">
+                    <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">
+                      Knowledge Base
+                    </div>
+                    <div className="font-bold text-[#0C233C] text-[20px] tracking-tight flex items-center gap-2">
+                      Documents
+                      {controlsDocs.length > 0 && (
+                        <span className="bg-[#0C233C] text-white px-2 py-0.5 rounded-md text-[11px] font-semibold">
+                          {controlsDocs.length}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      title="Dashboard view"
+                      onClick={() => { setRightPanelView("dashboard"); setSelectedDoc(null); }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold transition-colors ${
+                        rightPanelView === "dashboard"
+                          ? "bg-[#00338D] text-white"
+                          : "bg-white border border-[#E2E6EF] text-[#5A6478] hover:border-[#00338D]"
+                      }`}
+                    >
+                      <LayoutDashboard className="h-3.5 w-3.5" />
+                      Dashboard
+                    </button>
+                    <button
+                      type="button"
+                      title="Merged view (all docs deduplicated)"
+                      disabled={controlsDocs.length === 0 || mergedLoading}
+                      onClick={fetchMerged}
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                        controlsViewMode === "merged" && rightPanelView === "controls"
+                          ? "bg-[#00338D] text-white"
+                          : "bg-white border border-[#E2E6EF] text-[#5A6478] hover:border-[#00338D]"
+                      }`}
+                    >
+                      {mergedLoading ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
+                      ) : (
+                        <Layers className="h-3.5 w-3.5" />
+                      )}
+                      Merged
+                    </button>
+                    <button
+                      type="button"
+                      title="Refresh documents"
+                      onClick={fetchDocs}
+                      disabled={docsLoading}
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white border border-[#E2E6EF] text-[#5A6478] hover:border-[#00338D] hover:text-[#00338D] transition-colors"
+                    >
+                      <RotateCcw className={`h-3.5 w-3.5 ${docsLoading ? "animate-spin" : ""}`} />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={remapping || controlsDocs.length === 0}
+                      onClick={handleRemapObligations}
+                      title="Re-map all controls to regulatory obligations"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold bg-[#00338D] text-white hover:bg-[#1E49E2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {remapping ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                          Remapping…
+                        </>
+                      ) : (
+                        <>
+                          <Link2 className="h-3.5 w-3.5" />
+                          Map Obligations
+                        </>
+                      )}
+                    </button>
+                    {controlsDocs.length > 0 && (
+                      <button
+                        type="button"
+                        title="Clear entire controls library"
+                        disabled={clearingLibrary}
+                        onClick={() => setShowClearConfirm(true)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold bg-white border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Clear Library
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Inline clear confirmation */}
+                {showClearConfirm && (
+                  <div className="mb-4 p-4 rounded-2xl border border-red-300 bg-red-50 space-y-2">
+                    <p className="text-[13px] font-semibold text-red-700">Clear entire controls library?</p>
+                    <p className="text-[12px] text-red-600/80">
+                      This will permanently delete all {controlsDocs.length} document(s) and their extracted controls.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+                        onClick={handleClearLibrary}
+                        disabled={clearingLibrary}
+                      >
+                        {clearingLibrary ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                            Clearing…
+                          </>
+                        ) : (
+                          "Yes, clear all"
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-semibold bg-white border border-[#E2E6EF] text-[#5A6478] hover:border-[#00338D] transition-colors"
+                        onClick={() => setShowClearConfirm(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Documents grid */}
+                {docsLoading ? (
+                  <div className="bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-12 flex justify-center">
+                    <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#1E49E2]" />
+                  </div>
+                ) : controlsDocs.length === 0 ? (
+                  <div className="bg-white rounded-2xl border-2 border-dashed border-[#E2E6EF] shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                    <BookOpen className="h-12 w-12 text-[#8492A6]/40 mb-3" />
+                    <p className="text-[14px] font-semibold text-[#5A6478]">No documents yet</p>
+                    <p className="text-[12px] text-[#8492A6] mt-1">Upload a policy document above to populate the library</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {controlsDocs.map((doc, i) => {
+                      const isSelected = selectedDoc?.document_id === doc.document_id;
+                      const topDomains = Object.entries(doc.controls_by_domain ?? {})
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3);
+                      return (
+                        <div
+                          key={i}
+                          className={`bg-white rounded-2xl border border-[#E2E6EF] shadow-sm p-5 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-all ${
+                            isSelected ? "ring-2 ring-[#00338D]" : ""
+                          }`}
+                          onClick={() => handleDocClick(doc)}
+                        >
+                          {/* Top row: file icon + filename + delete */}
+                          <div className="flex items-start gap-2">
+                            <div
+                              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ background: "#EEF2FF" }}
+                            >
+                              <FileText className="h-4 w-4" style={{ color: "#1E49E2" }} />
+                            </div>
+                            <p className="text-[13px] font-bold text-[#0C233C] break-all leading-snug flex-1 min-w-0">
+                              {doc.source_filename}
+                            </p>
+                            <button
+                              type="button"
+                              className="h-7 w-7 shrink-0 inline-flex items-center justify-center rounded-md text-red-500 hover:bg-red-50 transition-colors"
+                              onClick={e => { e.stopPropagation(); handleDelete(doc.document_id); }}
+                              title="Delete document"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Middle: total controls badge + per-domain badges */}
+                          <div className="flex flex-wrap gap-1.5">
+                            <span className="bg-[#0C233C] text-white px-2 py-0.5 rounded-md text-[11px] font-semibold">
+                              {doc.total_controls} controls
+                            </span>
+                            {topDomains.map(([d, cnt], di) => {
+                              const hue = HUES[allDomainNames.indexOf(d) % HUES.length];
+                              return (
+                                <span
+                                  key={di}
+                                  className="text-[11px] font-semibold px-2 py-0.5 rounded-md border capitalize"
+                                  style={{
+                                    borderColor: `hsl(${hue},55%,55%)`,
+                                    color: `hsl(${hue},65%,28%)`,
+                                    background: `hsl(${hue},55%,96%)`,
+                                  }}
+                                >
+                                  {d.replace(/_/g, " ")} · {cnt}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div>
                   <div className="text-[11px] font-bold text-[#00338D] tracking-[2.5px] uppercase mb-1">Controls Library</div>
@@ -1833,59 +1910,72 @@ Obligations: ${obligationsText}`;
           <div className="flex flex-col flex-1 overflow-hidden">
 
             {/* Controls view header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/20 gap-3 flex-wrap">
-              <div className="flex items-center gap-2">
-                <List className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-[#E2E6EF] bg-white gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => { setRightPanelView("dashboard"); setSelectedDoc(null); }}
+                  title="Back to dashboard"
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-semibold text-[#5A6478] hover:text-[#0C233C] hover:bg-[#F0F2F7] transition-colors"
+                >
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  Dashboard
+                </button>
+                <div className="h-5 w-px bg-[#E2E6EF]" />
+                <List className="h-4 w-4 text-[#00338D]" />
+                <span className="text-[14px] font-bold text-[#0C233C]">
                   {controlsViewMode === "merged" ? "Merged Controls" : selectedDoc?.source_filename ?? "Controls"}
                 </span>
                 {controlsViewMode === "merged" && mergedControls && (
-                  <Badge variant="secondary" className="text-xs">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#0C233C] text-white">
                     {filteredControls.length} / {mergedControls.length}
-                  </Badge>
+                  </span>
                 )}
                 {controlsViewMode === "document" && selectedDoc && (
-                  <Badge variant="secondary" className="text-xs">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#0C233C] text-white">
                     {filteredControls.length} / {selectedDoc.controls?.length ?? 0}
-                  </Badge>
+                  </span>
                 )}
               </div>
-              <div className="flex items-center gap-1.5">
-                <Button
-                  size="sm"
-                  variant={controlsViewMode === "document" ? "default" : "outline"}
-                  className="h-7 text-xs"
+              <div className="flex items-center gap-2">
+                <button
                   disabled={!selectedDoc}
                   onClick={() => { setControlsViewMode("document"); setDomainFilter("all"); setTypeFilter("all"); setSearch(""); }}
+                  className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-semibold border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    controlsViewMode === "document"
+                      ? "bg-[#00338D] text-white border-[#00338D]"
+                      : "bg-white text-[#0C233C] border-[#E2E6EF] hover:border-[#00338D] hover:text-[#00338D]"
+                  }`}
                 >
-                  <BookOpen className="h-3 w-3 mr-1" />
+                  <BookOpen className="h-3.5 w-3.5" />
                   Document
-                </Button>
-                <Button
-                  size="sm"
-                  variant={controlsViewMode === "merged" ? "default" : "outline"}
-                  className="h-7 text-xs"
+                </button>
+                <button
                   disabled={controlsDocs.length === 0}
                   onClick={mergedControls !== null
                     ? () => { setControlsViewMode("merged"); setDomainFilter("all"); setTypeFilter("all"); setSearch(""); }
                     : fetchMerged
                   }
+                  className={`inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-semibold border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    controlsViewMode === "merged"
+                      ? "bg-[#00338D] text-white border-[#00338D]"
+                      : "bg-white text-[#0C233C] border-[#E2E6EF] hover:border-[#00338D] hover:text-[#00338D]"
+                  }`}
                 >
                   {mergedLoading
-                    ? <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current mr-1" />
-                    : <Layers className="h-3 w-3 mr-1" />
+                    ? <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-current" />
+                    : <Layers className="h-3.5 w-3.5" />
                   }
                   Merged
-                </Button>
+                </button>
               </div>
             </div>
 
             {/* Filter bar */}
-            <div className="px-4 py-3 border-b space-y-2.5">
+            <div className="px-5 py-4 border-b border-[#E2E6EF] bg-white space-y-3">
               <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <Input
-                  className="pl-8 h-8 text-xs"
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#8492A6]" />
+                <input
+                  className="w-full h-9 pl-9 pr-3 rounded-lg border border-[#E2E6EF] bg-white text-[12px] text-[#0C233C] placeholder:text-[#8492A6] focus:outline-none focus:border-[#00338D] focus:ring-2 focus:ring-[#00338D]/15"
                   placeholder="Search controls…"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
@@ -1893,7 +1983,7 @@ Obligations: ${obligationsText}`;
               </div>
               {/* Domain filter */}
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Domain</p>
+                <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[1.5px] mb-1.5">Domain</p>
                 <div className="flex flex-wrap gap-1.5">
                   <Badge
                     variant={domainFilter === "all" ? "default" : "outline"}
@@ -1918,7 +2008,7 @@ Obligations: ${obligationsText}`;
               </div>
               {/* Type filter */}
               <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Control Type</p>
+                <p className="text-[10px] font-bold text-[#00338D] uppercase tracking-[1.5px] mb-1.5">Control Type</p>
                 <div className="flex flex-wrap gap-1.5">
                   <Badge
                     variant={typeFilter === "all" ? "default" : "outline"}
